@@ -32,9 +32,10 @@ class HospitalRequestService {
                     corpPartner1Name: r.fields["Corp Partner 1 Name"],
                     corpPartner1Logo: r.fields["Corp Partner 1 Logo"],
                     corpPartner1Type: r.fields["Corp Partner 1 Type"],
-                    corpPartner2Logo: r.fields["Corp Partner 2 Name"],
-                    corpPartner2Type: r.fields["Corp Partner 2 Logo"],
-                    corpPartner2Name: r.fields["Corp Partner 2 Type"],
+                    corpPartner2Name: r.fields["Corp Partner 2 Name"],
+                    corpPartner2Logo: r.fields["Corp Partner 2 Logo"],
+                    corpPartner2Type: r.fields["Corp Partner 2 Type"],
+
                 } as HospitalRequest
             }));
     }
