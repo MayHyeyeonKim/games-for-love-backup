@@ -14,6 +14,10 @@ class HospitalInfoService {
             return records;
         })
             .then(records => records.map(r => {
+                const extractUrls = (attachments:any) => {
+                    return attachments && attachments.length > 0 ? attachments.map((att:any) => att.url) : [];
+                };
+
                 return {
                     name: `${r.fields["Hospital Name"]}`,
                     status: r.fields["Status"],
@@ -27,9 +31,12 @@ class HospitalInfoService {
                     address: r.fields["Address"],
                     longitude: r.fields["Longitude"],
                     latitude: r.fields["Latitude"],
-                    hospitalPicture1: r.fields["Hospital Picture 1"],
-                    hospitalPicture2: r.fields["Hospital Picture 2"],
-                    hospitalPicture3: r.fields["Hospital Picture 3"],
+                    hospitalPicture1: extractUrls(r.fields["Hospital Picture 1"]),
+                    hospitalPicture2: extractUrls(r.fields["Hospital Picture 2"]),
+                    hospitalPicture3: extractUrls(r.fields["Hospital Picture 3"]),
+                    // hospitalPicture1: r.fields["Hospital Picture 1"],
+                    // hospitalPicture2: r.fields["Hospital Picture 2"],
+                    // hospitalPicture3: r.fields["Hospital Picture 3"],
                     id: r.fields["ID"]
                 } as HospitalInfo
             }));

@@ -1,18 +1,18 @@
-import { Box, Container, Grid, List, ListItem, ListItemButton, ListItemText, Paper, Stack } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Container, Grid, Paper } from '@mui/material';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { ReactNode, useEffect, useState } from 'react';
 import { FullscreenControl, Marker, NavigationControl, ScaleControl } from 'react-map-gl';
 import Map from 'react-map-gl/maplibre';
 
 import './App.css';
 import { DASPopup } from './components/DASPopup';
-import { PopupInfo } from './mapping/popuInfo';
+import { PopupInfo } from './mapping/popupInfo';
+import { HospitalInfo } from './mapping/hospitalInfo';
 
 import { generalInfoService } from './mapping/generalInfoService';
 import { hospitalInfoService } from './mapping/hospitalInfoService';
 import { hospitalRequestService } from './mapping/hospitalRequestService';
 import { hospitalFundedService } from './mapping/hospitalFundedService';
-
 
 const MAP_HEIGHT = '100vh';
 
@@ -20,35 +20,23 @@ const MAP_HEIGHT = '100vh';
 const DEFAULT_VIEW = {
   longitude: -122.4,
   latitude: 47.6061,
-  zoom: 7
-}
+  zoom: 10
+};
 
 function App() {
   const [viewState, setViewState] = useState(DEFAULT_VIEW);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
-
+  const [hospitals, setHospitals] = useState<HospitalInfo[]>([]);
 
   useEffect(() => {
-    hospitalInfoService.getHospitalInfo().then((res) => console.log(res));
+    hospitalInfoService.getHospitalInfo().then((res: HospitalInfo[]) => {
+      const closedHospitals = res.filter(hospital => hospital.status === 'Closed');
+      console.log("Closed Hospitals:", closedHospitals);
+      setHospitals(closedHospitals);
+    });
     generalInfoService.getGeneralInfo().then((res) => console.log(res));
     hospitalRequestService.getHospitalRequest().then((res) => console.log(res));
     hospitalFundedService.getHospitalFunded().then((res) => console.log(res));
-  }, []);
-
-  useEffect(() => {
-    Promise
-      .all([
-        hospitalInfoService.getHospitalInfo(),
-        generalInfoService.getGeneralInfo(),
-        hospitalRequestService.getHospitalRequest(),
-        hospitalFundedService.getHospitalFunded()
-      ])
-      .then(resps => {
-        console.log("res[0]",resps[0]);
-        console.log("res[1]", resps[1]);
-        console.log("res[2]", resps[2]);
-        console.log("res[3]", resps[3]);
-      });
   }, []);
 
   return (
@@ -68,13 +56,43 @@ function App() {
               <FullscreenControl position="top-left" />
               <NavigationControl position="top-left" />
               <ScaleControl />
-              <DASPopup popupInfo={popupInfo} onClose={() => setPopupInfo(null)} />
+              {hospitals.map(hospital => (
+                <Marker
+                  key={hospital.name}
+                  longitude={hospital.longitude}
+                  latitude={hospital.latitude}
+                  onClick={() => setPopupInfo({
+                    hospitalInfo: hospital  
+                    // name: hospital.name,
+                    // status: hospital.status,
+                    // type: hospital.type,
+                    // description: hospital.description,
+                    // year: hospital.year,
+                    // country: hospital.country,
+                    // state: hospital.state,
+                    // zip: hospital.zip,
+                    // city: hospital.city,
+                    // address: hospital.address,
+                    // longitude: hospital.longitude,
+                    // latitude: hospital.latitude,
+                    // hospitalPicture1: hospital.hospitalPicture1,
+                    // hospitalPicture2: hospital.hospitalPicture2,
+                    // hospitalPicture3: hospital.hospitalPicture3
+                  })}
+                />
+              ))}
+              {popupInfo && (
+                <DASPopup
+                  popupInfo={popupInfo}
+                  onClose={() => setPopupInfo(null)}
+                />
+              )}
             </Map>
           </Box>
         </Grid>
       </Grid>
-    </Container >
-  )
+    </Container>
+  );
 }
 
-export default App
+export default App;
