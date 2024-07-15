@@ -5,7 +5,6 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { PopupInfo } from '../models/popupInfo';
-import { Popup } from 'react-map-gl';
 
 interface GFLPopupProps {
   popupInfo: PopupInfo | null;
@@ -21,15 +20,19 @@ export const GFLPopup: React.FC<GFLPopupProps> = ({
   const images: string[] = popupInfo.hospitalInfo.hospitalPicture1;
 
   return (
-      <Popup
-      anchor="bottom"
-      longitude={Number(popupInfo.hospitalInfo.longitude)}
-      latitude={Number(popupInfo.hospitalInfo.latitude)}
-      onClose={() => onClose()}
-      closeOnClick={false}
-      >
-
-      
+    <Box
+      sx={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        backgroundColor: 'white',
+        boxShadow: '0 -2px 10px rgba(0, 0, 0, 0.1)',
+        borderRadius: '30px',
+        zIndex: 1000,
+        p: 2,
+      }}
+    >
       <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row' }}>
         <Box sx={{ width: '40%', p: 1 }}>
           {images && images.length > 0 && (
@@ -91,7 +94,7 @@ export const GFLPopup: React.FC<GFLPopupProps> = ({
           </Stack>
         </Box>
       </Box>
-      </Popup>
+    </Box>
   );
 };
 
