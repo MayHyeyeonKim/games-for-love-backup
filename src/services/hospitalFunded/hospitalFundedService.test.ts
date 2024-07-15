@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { airtableService } from './airtableService'
+import { airtableService } from '../../mapping/airtableService'
 import { hospitalFundedService } from "./hospitalFundedService";
 
 describe("HospitalFundedService tests",()=>{
@@ -23,7 +23,7 @@ describe("HospitalFundedService tests",()=>{
         ];
         const getTableRecordsSpy = vi.spyOn(airtableService, "getTableRecords").mockResolvedValue(mockRecords as any);
         const result = await hospitalFundedService.getHospitalFunded();
-        expect(getTableRecordsSpy).toHaveBeenCalled();
+        expect(getTableRecordsSpy).toHaveBeenCalledWith(import.meta.env.VITE_AIRTABLE_TABLE_HOSPITAL_FUNDED_REFERENCE, 100);
         expect(result).toEqual([
             {
                 orderID: "12345",

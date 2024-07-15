@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { airtableService } from './airtableService'
+import { airtableService } from '../../mapping/airtableService'
 import { generalInfoService } from "./generalInfoService";
 
 describe("generalInfoService tests",()=>{
@@ -45,8 +45,3 @@ describe("generalInfoService tests",()=>{
         ]);
     })
 })
-
-//toHaveBeenCalledWith 
-//필드값을 가져오는 것
-//mocking 
-//결과 어디서 봄?

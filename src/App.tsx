@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
 import { Box, Container, Grid, Paper } from '@mui/material';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { FullscreenControl, Marker, NavigationControl, ScaleControl } from 'react-map-gl';
+import {useEffect, useState } from 'react';
 import Map from 'react-map-gl/maplibre';
 
 import './App.css';
-import { DASPopup } from './components/DASPopup';
-import { PopupInfo } from './mapping/popupInfo';
-import { HospitalInfo } from './mapping/hospitalInfo';
+import { GFLPopup } from './components/GFLPopup';
+import { PopupInfo } from './models/popupInfo';
+import { HospitalInfo } from './models/hospitalInfo';
 
-import { generalInfoService } from './mapping/generalInfoService';
-import { hospitalInfoService } from './mapping/hospitalInfoService';
-import { hospitalRequestService } from './mapping/hospitalRequestService';
-import { hospitalFundedService } from './mapping/hospitalFundedService';
+import { generalInfoService } from './services/generalInfo/generalInfoService';
+import { hospitalInfoService } from './services/hospitalInfo/hospitalInfoService';
+import { hospitalRequestService } from './services/hospitalRequest/hospitalRequestService';
+import { hospitalFundedService } from './services/hospitalFunded/hospitalFundedService';
 
 const MAP_HEIGHT = '100vh';
 
@@ -62,27 +62,12 @@ function App() {
                   longitude={hospital.longitude}
                   latitude={hospital.latitude}
                   onClick={() => setPopupInfo({
-                    hospitalInfo: hospital  
-                    // name: hospital.name,
-                    // status: hospital.status,
-                    // type: hospital.type,
-                    // description: hospital.description,
-                    // year: hospital.year,
-                    // country: hospital.country,
-                    // state: hospital.state,
-                    // zip: hospital.zip,
-                    // city: hospital.city,
-                    // address: hospital.address,
-                    // longitude: hospital.longitude,
-                    // latitude: hospital.latitude,
-                    // hospitalPicture1: hospital.hospitalPicture1,
-                    // hospitalPicture2: hospital.hospitalPicture2,
-                    // hospitalPicture3: hospital.hospitalPicture3
+                    hospitalInfo: hospital
                   })}
                 />
               ))}
               {popupInfo && (
-                <DASPopup
+                <GFLPopup
                   popupInfo={popupInfo}
                   onClose={() => setPopupInfo(null)}
                 />

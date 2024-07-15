@@ -1,5 +1,5 @@
-import { airtableService } from './airtableService';
-import { HospitalInfo } from './hospitalInfo';
+import { airtableService } from '../../mapping/airtableService';
+import { HospitalInfo } from '../../models/hospitalInfo';
 
 
 class HospitalInfoService {
@@ -34,9 +34,6 @@ class HospitalInfoService {
                     hospitalPicture1: extractUrls(r.fields["Hospital Picture 1"]),
                     hospitalPicture2: extractUrls(r.fields["Hospital Picture 2"]),
                     hospitalPicture3: extractUrls(r.fields["Hospital Picture 3"]),
-                    // hospitalPicture1: r.fields["Hospital Picture 1"],
-                    // hospitalPicture2: r.fields["Hospital Picture 2"],
-                    // hospitalPicture3: r.fields["Hospital Picture 3"],
                     id: r.fields["ID"]
                 } as HospitalInfo
             }));

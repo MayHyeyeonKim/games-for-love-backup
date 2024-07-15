@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { airtableService } from './airtableService';
+import { airtableService } from '../../mapping/airtableService';
 import { hospitalRequestService } from './hospitalRequestService';
 
 describe('HospitalRequestService tests', () => {
@@ -34,8 +34,6 @@ describe('HospitalRequestService tests', () => {
     const getTableRecordsSpy = vi.spyOn(airtableService, 'getTableRecords').mockResolvedValue(mockRecords as any);
 
     const result = await hospitalRequestService.getHospitalRequest();
-
-    console.log("리졸트 어떠케 나오냐?", result);
 
     expect(getTableRecordsSpy).toHaveBeenCalled();
 
