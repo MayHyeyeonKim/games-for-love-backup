@@ -5,6 +5,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { PopupInfo } from "../models/popupInfo";
+import thumbnailData from "../../test/thumbnailData.json";
 
 interface GFLPopupProps {
   popupInfo: PopupInfo | null;
@@ -17,7 +18,15 @@ export const GFLPopup: React.FC<GFLPopupProps> = ({
 }) => {
   if (!popupInfo) return null;
 
-  const images: string[] = popupInfo.hospitalInfo.hospitalPicture1;
+    // 디버깅용 코드 추가
+    console.log("popupInfo.hospitalInfo.id:", popupInfo.hospitalInfo.id);
+    console.log("thumbnailData:", thumbnailData);
+
+  // const images: string[] = popupInfo.hospitalInfo.hospitalPicture1;
+  const hospitalData = thumbnailData.find(hospital => hospital.ID === popupInfo.hospitalInfo.id); // JSON 데이터에서 해당 병원 정보 찾기
+  if (!hospitalData) return null;
+
+  const images: string[] = hospitalData["Hospital Picture 1"].map(picture => picture.url);
 
   return (
     <Box
