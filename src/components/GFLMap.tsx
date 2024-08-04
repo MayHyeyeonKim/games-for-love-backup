@@ -19,6 +19,7 @@ interface MapProps {
 }
 
 export const GFLMap: React.FC<MapProps> = ({ hospitals, viewState, setViewState, setPopupInfo, popupInfo }) => {
+  console.log("popupinfo", popupInfo)
   return (
     <Map
       {...viewState}
@@ -41,7 +42,7 @@ export const GFLMap: React.FC<MapProps> = ({ hospitals, viewState, setViewState,
         />
       ))}
       {popupInfo && (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex'}}>
           <GFLPopup
             popupInfo={popupInfo}
             onClose={() => setPopupInfo(null)}

@@ -4,12 +4,16 @@ import { HospitalInfo } from '../../models/hospitalInfo';
 import thumbnailData from "../../../test/thumbnailData.json";
 
 const extractUrls = (attachments: any) => {
+    console.log("aa", attachments)
     return attachments && attachments.length > 0 ? attachments.map((att: any) => att.url) : [];
 };
 
 class MockHospitalInfoService {
     async getHospitalInfo(): Promise<HospitalInfo[]> {
+        console.log("thumbnailData", thumbnailData)
         return thumbnailData.map(data => {
+            console.log("data", data["Hospital Picture 1"])
+            console.log("dddd", extractUrls(data["Hospital Picture 1"]))
             return {
                 id: data["ID"],
                 name: data["Hospital Name"],
@@ -24,9 +28,9 @@ class MockHospitalInfoService {
                 address: data["Address"],
                 longitude: data["Longitude"],
                 latitude: data["Latitude"],
-                hospitalPicture1: extractUrls(data["Hospital Picture 1"][0]),
-                hospitalPicture2: extractUrls(data["Hospital Picture 1"][1]),
-                hospitalPicture3: extractUrls(data["Hospital Picture 1"][2]),
+                hospitalPicture1: extractUrls(data["Hospital Picture 1"]),
+                hospitalPicture2: extractUrls(data["Hospital Picture 1"]),
+                hospitalPicture3: extractUrls(data["Hospital Picture 1"]),
             } as HospitalInfo
         });
     }
