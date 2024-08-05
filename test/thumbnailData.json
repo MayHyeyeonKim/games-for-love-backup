@@ -283,5 +283,48 @@
         "ID": 2,
         "Type of Organization": "TypeB",
         "Kids Served / Year": 200
+    },
+    {
+        "Hospital Name": "Swedish Primary Care",
+        "Status": "Actively funding",
+        "Organization Notes / Description": "Description D",
+        "State": "WA",
+        "Country": "USA",
+        "City": "Seattle",
+        "Latitude": 47.6359,
+        "Longitude": -122.3563,
+        "ZIP": "98109",
+        "Address": "101 W Olympic Pl",
+        "Hospital Picture 1": [
+            {
+                "id": "attQHiSeczAh5lbY4",
+                "width": 800,
+                "height": 533,
+                "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy27cEACbb51rMa-ZD2V-I5_t_JHW583IqqQ&s",
+                "filename": "Swedish_Queen_Anne.jpg",
+                "size": 123456,
+                "type": "image/jpeg",
+                "thumbnails": {
+                    "small": {
+                        "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy27cEACbb51rMa-ZD2V-I5_t_JHW583IqqQ&s",
+                        "width": 54,
+                        "height": 36
+                    },
+                    "large": {
+                        "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy27cEACbb51rMa-ZD2V-I5_t_JHW583IqqQ&s",
+                        "width": 768,
+                        "height": 512
+                    },
+                    "full": {
+                        "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy27cEACbb51rMa-ZD2V-I5_t_JHW583IqqQ&s",
+                        "width": 800,
+                        "height": 533
+                    }
+                }
+            }
+        ],
+        "ID": 4,
+        "Type of Organization": "TypeD",
+        "Kids Served / Year": 400
     }
 ]

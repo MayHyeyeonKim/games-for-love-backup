@@ -26,9 +26,7 @@ function App() {
 
   useEffect(() => {
     hospitalInfoService.getHospitalInfo().then((res: HospitalInfo[]) => {
-      const closedHospitals = res.filter(hospital => hospital.status === 'Closed');
-      console.log("Closed Hospitals:", closedHospitals);
-      setHospitals(closedHospitals);
+      setHospitals(res);
     });
     generalInfoService.getGeneralInfo().then((res) => console.log(res));
     hospitalRequestService.getHospitalRequest().then((res) => console.log(res));

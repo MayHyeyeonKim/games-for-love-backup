@@ -1,36 +1,18 @@
 .chip {
-    /* position: absolute; */
-    /* top: 50px; */
-    left: 8px;
-    background-color: #FFFFFF !important;
-    border-color: red;
-    z-index: 1000;
-
-    /* z-index: 1000; */
-    /* background-color: rgba(255, 255, 255, 0.8); 투명도 조절 */
-  }
-
-.chip-and-close-btn {
-    position: absolute;
     top: 15px;
     left: 15px;
+    background-color: #FFFFFF !important;
+    position: absolute;
     z-index: 2;
-}
+  }
 
-.chip-and-close-btn2 {
+.close-btn-container {
     position: absolute;
     top: 15px;
     right: 10px;
     z-index: 2;
 }
 
-.MuiSvgIcon-root {
-    color: #92C65E;
-    font-size: 10px;
-}
-
-
 .close-btn{
     padding: 0px !important;
-    /* filter: invert(100%); */
 }
