@@ -16,9 +16,8 @@ export const GFLPopup: React.FC<GFLPopupProps> = ({
   useEffect(() => {
     if (popupInfo) {
       setImages(popupInfo.hospitalInfo.hospitalPicture1);
-    };
-  }, [popupInfo])
-  console.log("images", images)
+    }
+  }, [popupInfo]);
   return (
     popupInfo && (
       <Popup
@@ -28,9 +27,9 @@ export const GFLPopup: React.FC<GFLPopupProps> = ({
         closeOnClick={false}
         onClose={onClose}
         anchor="top"
-        className= "popup-style"
+        className="popup-style"
       >
-        <HospitalCard popupInfo={popupInfo} images={images} onClose={onClose}/>
+        <HospitalCard popupInfo={popupInfo} images={images} onClose={onClose} />
       </Popup>
     )
   );
