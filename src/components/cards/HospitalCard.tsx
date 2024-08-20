@@ -65,7 +65,10 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
               label={`${popupInfo?.hospitalInfo.city},${popupInfo?.hospitalInfo.state}`}
               sx={{
                 "& .MuiChip-icon": {
-                  color: "#92C65E",
+                  color:
+                    `${popupInfo?.hospitalInfo?.status}` !== "Closed"
+                      ? "#92C65E"
+                      : "#DB5757",
                   fontSize: "15px",
                 },
                 color: "#454545",
@@ -119,7 +122,7 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
           sx={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            justifyContent: "center",
             width: "100%",
           }}
         >
@@ -129,11 +132,15 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
             sx={{
               backgroundColor: "black",
               marginTop: "8px",
-              width: "112px",
+              width:
+                `${popupInfo?.hospitalInfo?.status}` !== "Closed"
+                  ? "112px"
+                  : "300px",
               height: "26px",
               borderRadius: "10px",
               textTransform: "none",
               fontSize: "10px",
+              marginRight: "2px",
               "&:hover": {
                 backgroundColor: "transparent",
                 color: "#000",
@@ -142,25 +149,28 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
           >
             Learn more
           </Button>
-          <Button
-            variant="contained"
-            href="#"
-            sx={{
-              backgroundColor: "black",
-              marginTop: "8px",
-              width: "112px",
-              height: "26px",
-              borderRadius: "10px",
-              textTransform: "none",
-              fontSize: "10px",
-              "&:hover": {
-                backgroundColor: "transparent",
-                color: "#000",
-              },
-            }}
-          >
-            Donate
-          </Button>
+          {popupInfo?.hospitalInfo.status !== "Closed" && (
+            <Button
+              variant="contained"
+              href="#"
+              sx={{
+                backgroundColor: "black",
+                marginTop: "8px",
+                width: "112px",
+                height: "26px",
+                borderRadius: "10px",
+                textTransform: "none",
+                fontSize: "10px",
+                marginLeft: "2px",
+                "&:hover": {
+                  backgroundColor: "transparent",
+                  color: "#000",
+                },
+              }}
+            >
+              Donate
+            </Button>
+          )}
         </Box>
         <Box sx={{ marginBottom: "5px" }}>
           <Typography
