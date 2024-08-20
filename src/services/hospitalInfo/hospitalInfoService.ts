@@ -3,8 +3,8 @@ import { HospitalInfo } from "../../models/hospitalInfo";
 
 import thumbnailData from "../../../test/thumbnailData.json";
 
-const extractUrls = (attachments: any[]) => {
-  return attachments ? attachments.map((att: any[]) => att.url) : [];
+const extractUrls = (attachments: any) => {
+  return attachments ? attachments.map((att: any) => att.url) : [];
 };
 
 class MockHospitalInfoService {
