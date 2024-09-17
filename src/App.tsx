@@ -18,7 +18,7 @@ import { generalInfoService } from "./services/generalInfo/generalInfoService";
 import { hospitalFundedService } from "./services/hospitalFunded/hospitalFundedService";
 import { hospitalInfoService } from "./services/hospitalInfo/hospitalInfoService";
 import { hospitalRequestService } from "./services/hospitalRequest/hospitalRequestService";
-
+import { FilterType } from "./types/fillterType";
 
 // Seattle
 const DEFAULT_VIEW = {
@@ -33,10 +33,16 @@ function App() {
   const [hospitals, setHospitals] = useState<HospitalInfo[]>([]);
   const [windowHeight, setWindowHeight] = useState<number>(400);
 
-  useEffect(() => {
-    hospitalInfoService.getHospitalInfo().then((res: HospitalInfo[]) => {
+  const getHospitalInfo = (filter?: FilterType) => {
+    hospitalInfoService.getHospitalInfo(filter).then((res: HospitalInfo[]) => {
+      console.log("App.tsx에서 getHospitalInfo입니다: ", res);
       setHospitals(res);
+    }).catch(error => {
+      console.error("데이터를 가져오는 중 오류 발생: ", error);
     });
+  };
+  useEffect(() => {
+    getHospitalInfo();
     generalInfoService.getGeneralInfo().then((res) => console.log(res));
     hospitalRequestService.getHospitalRequest().then((res) => console.log(res));
     hospitalFundedService.getHospitalFunded().then((res) => console.log(res));
@@ -45,17 +51,17 @@ function App() {
     function handleResize() {
       setWindowHeight(window.innerHeight);
     }
-    window.addEventListener('resize', handleResize)
+    window.addEventListener("resize", handleResize);
   }, []);
 
   return (
     <Grid container>
       <Grid item xs={12} lg={5}>
-        <Box sx={{ height: windowHeight, overflowY: 'auto' }}>
-          <Box padding={1} >
-            <SearchAndSort />
+        <Box sx={{ height: windowHeight, overflowY: "auto" }}>
+          <Box padding={1}>
+            <SearchAndSort getHospitalInfo={getHospitalInfo}/>
           </Box>
-          <Box padding={1} >
+          <Box padding={1}>
             {hospitals.map((hospital, idx: number) => (
               <HospitalCardDetails key={`h-${idx})`} hospital={hospital} />
             ))}

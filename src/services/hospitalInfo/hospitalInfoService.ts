@@ -2,6 +2,7 @@ import { airtableService } from "../../mapping/airtableService";
 import { HospitalInfo } from "../../models/hospitalInfo";
 
 import thumbnailData from "../../../test/thumbnailData.json";
+import { Filter } from "../../types/filter";
 
 const extractUrls = (attachments: any) => {
   return attachments ? attachments.map((att: any) => att.url) : [];
@@ -42,8 +43,8 @@ class HospitalInfoService {
   }
 }
 class MockHospitalInfoService extends HospitalInfoService {
-  async getHospitalInfo(): Promise<HospitalInfo[]> {
-    return thumbnailData.map((data) => {
+  async getHospitalInfo(filter?: Filter): Promise<HospitalInfo[]> {
+    const hospitals = thumbnailData.map((data) => {
       return {
         id: data["ID"],
         name: data["Hospital Name"],
@@ -61,6 +62,23 @@ class MockHospitalInfoService extends HospitalInfoService {
         hospitalPicture1: extractUrls(data["Hospital Picture 1"]),
       } as HospitalInfo;
     });
+
+    console.log("Original hospitals은 이렇게 생겼어:", hospitals);
+
+    if (filter) {
+      console.log("Filter잘들어왔어?:", filter);
+
+      const filtered_hospitals = hospitals.filter(
+        (hospital) =>
+          (filter.location.includes(hospital.state) ||
+            filter.location.includes(hospital.city) ||
+            filter.location.includes(hospital.zip)) &&
+          filter.fundingStatus.includes(hospital.status)
+      );
+      return filtered_hospitals;
+    } else {
+      return hospitals;
+    }
   }
 }
 
