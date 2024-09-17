@@ -21,7 +21,6 @@ import { FilterType } from "../types/fillterType";
 import { styled } from "@mui/material/styles";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { InputAdornment } from "@mui/material";
-import { Height } from "@mui/icons-material";
 
 const BootstrapDialog = styled(Dialog)(() => ({
   "& .MuiDialog-paper": {

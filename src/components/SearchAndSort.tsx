@@ -12,7 +12,6 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 
 import Filter from "../components/Filter";
 import { FilterType } from "../types/fillterType";
-import { HospitalInfo } from "../models/hospitalInfo";
 
 interface SearchAndSortProps {
   getHospitalInfo: (filter?: FilterType) => void;
