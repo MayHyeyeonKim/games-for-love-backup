@@ -13,7 +13,7 @@ class HospitalInfoService {
     if (hospitalInfo === undefined) {
       throw new Error("hospitalInfo is undefined");
     } else {
-      return hospitalInfo.status !== "Closed";
+      return hospitalInfo.status !== "past";
     }
   };
   async getHospitalInfo(): Promise<HospitalInfo[]> {
@@ -70,11 +70,12 @@ class MockHospitalInfoService extends HospitalInfoService {
 
       const filtered_hospitals = hospitals.filter(
         (hospital) =>
-          (filter.location.includes(hospital.state) ||
-            filter.location.includes(hospital.city) ||
-            filter.location.includes(hospital.zip)) &&
-          filter.fundingStatus.includes(hospital.status)
+          (filter.location.includes(hospital.state.toLowerCase()) ||
+            filter.location.includes(hospital.city.toLowerCase()) ||
+            filter.location.includes(hospital.zip.toLowerCase())) &&
+          filter.status.includes(hospital.status.toLowerCase())
       );
+      console.log("filtered_hospitals잘나오지?: ", filtered_hospitals)
       return filtered_hospitals;
     } else {
       return hospitals;

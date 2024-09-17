@@ -21,10 +21,12 @@ import { FilterType } from "../types/fillterType";
 import { styled } from "@mui/material/styles";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { InputAdornment } from "@mui/material";
+import { Height } from "@mui/icons-material";
 
 const BootstrapDialog = styled(Dialog)(() => ({
   "& .MuiDialog-paper": {
-    width: "18%", // 원하는 너비로 설정
+    width: "400px", // 원하는 너비로 설정
+    height: "480px",
     maxWidth: "none",
     margin: "auto", // 중앙 정렬 유지
     borderRadius: "15px",
@@ -50,11 +52,6 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
     status: [],
   });
   const [checkedStatus, setCheckedStatus] = useState<string[]>([]);
-
-  const extendedHandleClose = () => {
-    // 다이얼로그를 닫기만 함
-    handleClose();
-  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && locationValue.trim() !== "") {
@@ -101,14 +98,14 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
   useEffect(() => {
     setFilterValues((prevValues) => ({
       ...prevValues,
-      location: locationChips,
-      status: checkedStatus,
+      location: locationChips.map((chip)=>(chip.toLowerCase())),
+      status: checkedStatus.map((status)=>(status.toLowerCase())),
     }));
   }, [locationChips, checkedStatus]);
 
   return (
     <BootstrapDialog
-      onClose={extendedHandleClose}
+      onClose={handleClose}
       open={open}
       aria-labelledby="filter-hospital-dialog"
     >
@@ -130,8 +127,8 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
       >
         <CloseIcon />
       </IconButton>
-      <DialogContent>
-        <Box sx={{ mt: 1, mb: 0.8 }}>
+      <DialogContent sx={{}}>
+        <Box sx={{ mt: 2, mb: 0.8 }}>
           <Typography
             // variant="h6"
             sx={{ fontSize: "20px", color: "#000", fontWeight: "bold" }}
@@ -198,6 +195,7 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
           <FormLabel
             component="legend"
             sx={{
+              
               fontSize: "20px",
               color: "#000",
               fontWeight: "bold",
@@ -216,8 +214,8 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
                   checked={status.active}
                   onChange={handleCheckbox}
                   sx={{
-                    marginBottom: "0px",
-                    paddingBottom: "0px",
+                    // marginBottom: "0px",
+                    // paddingBottom: "0px",
                     "& .MuiSvgIcon-root": {
                       color: "#000",
                       "&.Mui-checked": {
@@ -239,8 +237,8 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
                   checked={status.past}
                   onChange={handleCheckbox}
                   sx={{
-                    marginBottom: "0px",
-                    paddingBottom: "0px",
+                    // marginBottom: "0px",
+                    // paddingBottom: "0px",
                     "& .MuiSvgIcon-root": {
                       color: "#000",
                       "&.Mui-focusVisible": {
@@ -265,8 +263,8 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
                   checked={status.all}
                   onChange={handleCheckbox}
                   sx={{
-                    marginBottom: "0px",
-                    paddingBottom: "0px",
+                    // marginBottom: "0px",
+                    // paddingBottom: "0px",
                     "& .MuiSvgIcon-root": {
                       color: "#000",
                       "&.Mui-checked": {
