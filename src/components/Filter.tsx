@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,17 +17,18 @@ import {
   Button,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { FilterType } from "../types/fillterType";
 import { styled } from "@mui/material/styles";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { InputAdornment } from "@mui/material";
+import { hospitalInfoService } from "../services/hospitalInfo/hospitalInfoService";
+import { HospitalsContext } from "../context/HospitalsContext";
 
 const BootstrapDialog = styled(Dialog)(() => ({
   "& .MuiDialog-paper": {
-    width: "400px", // 원하는 너비로 설정
+    width: "400px",
     height: "480px",
     maxWidth: "none",
-    margin: "auto", // 중앙 정렬 유지
+    margin: "auto",
     borderRadius: "15px",
   },
 }));
@@ -35,21 +36,22 @@ const BootstrapDialog = styled(Dialog)(() => ({
 interface FilterProps {
   open: boolean;
   handleClose: () => void;
-  applyFilters: (filterValues: FilterType) => void;
 }
 
-const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
+const Filter: React.FC<FilterProps> = ({ open, handleClose }) => {
+  const { setOriginals, setOriginalFilters, setHospitals, filters, setFilters } =
+    useContext(HospitalsContext);
   const [locationValue, setLocationValue] = useState<string>("");
-  const [locationChips, setLocationChips] = useState<string[]>([]);
+  const [locationChips, setLocationChips] = useState<string[]>(
+    filters.location
+  );
+
   const [status, setStatus] = useState({
     active: false,
     past: false,
     all: false,
   });
-  const [filterValues, setFilterValues] = useState<FilterType>({
-    location: [],
-    status: [],
-  });
+
   const [checkedStatus, setCheckedStatus] = useState<string[]>([]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -78,29 +80,38 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
   };
 
   const handleApplyFilters = () => {
-    console.log("필터벨류 잘 나와?: ", filterValues);
+    if (filters.location.length === 0 && filters.status.length === 0) {
+      hospitalInfoService.getHospitalInfo().then((res) => setOriginals(res));
+    } else {
+      hospitalInfoService
+        .getHospitalInfo(filters)
+        .then((res) => setOriginals(res));
+    }
 
-    // 부모 컴포넌트에 필터 값 전달
-    applyFilters(filterValues);
-
-    // 다이얼로그 닫기
     handleClose();
   };
 
   useEffect(() => {
     const updatedCheckedStatus = Object.keys(status).filter(
       (key) => key !== "all" && status[key as keyof typeof status]
-    ); // true키만 필터링
+    );
     setCheckedStatus(updatedCheckedStatus);
   }, [status]);
 
   useEffect(() => {
-    setFilterValues((prevValues) => ({
-      ...prevValues,
-      location: locationChips.map((chip)=>(chip.toLowerCase())),
-      status: checkedStatus.map((status)=>(status.toLowerCase())),
-    }));
+    setOriginalFilters({
+      location: locationChips.map((chip) => chip.toLowerCase()),
+      status: checkedStatus.map((status) => status.toLowerCase()),
+    });
   }, [locationChips, checkedStatus]);
+
+  useEffect(() => {
+    setStatus({
+      active: filters.status.includes("active"),
+      past: filters.status.includes("past"),
+      all: filters.status.includes("active") && filters.status.includes("past"),
+    });
+  }, []);
 
   return (
     <BootstrapDialog
@@ -194,7 +205,6 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
           <FormLabel
             component="legend"
             sx={{
-              
               fontSize: "20px",
               color: "#000",
               fontWeight: "bold",
@@ -213,8 +223,6 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
                   checked={status.active}
                   onChange={handleCheckbox}
                   sx={{
-                    // marginBottom: "0px",
-                    // paddingBottom: "0px",
                     "& .MuiSvgIcon-root": {
                       color: "#000",
                       "&.Mui-checked": {
@@ -236,8 +244,6 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
                   checked={status.past}
                   onChange={handleCheckbox}
                   sx={{
-                    // marginBottom: "0px",
-                    // paddingBottom: "0px",
                     "& .MuiSvgIcon-root": {
                       color: "#000",
                       "&.Mui-focusVisible": {
@@ -262,8 +268,6 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose, applyFilters }) => {
                   checked={status.all}
                   onChange={handleCheckbox}
                   sx={{
-                    // marginBottom: "0px",
-                    // paddingBottom: "0px",
                     "& .MuiSvgIcon-root": {
                       color: "#000",
                       "&.Mui-checked": {

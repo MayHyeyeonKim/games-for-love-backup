@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import {
   Box,
   TextField,
@@ -11,13 +11,11 @@ import ImportExportIcon from "@mui/icons-material/ImportExport";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
 import Filter from "../components/Filter";
-import { FilterType } from "../types/fillterType";
+import { HospitalsContext } from "../context/HospitalsContext";
+import { hospitalInfoService } from "../services/hospitalInfo/hospitalInfoService";
 
-interface SearchAndSortProps {
-  getHospitalInfo: (filter?: FilterType) => void;
-}
-
-export const SearchAndSort: React.FC<SearchAndSortProps> = ({getHospitalInfo}) => {
+export const SearchAndSort = () => {
+  const {originals, setHospitals} = useContext(HospitalsContext)
   const [showFilters, setShowFilters] = useState(false);
 
   const handleOpenFilters = () => {
@@ -27,6 +25,12 @@ export const SearchAndSort: React.FC<SearchAndSortProps> = ({getHospitalInfo}) =
   const handleCloseFilters = () => {
     setShowFilters(false);
   };
+
+  const changeSearch = (e: ChangeEvent<HTMLInputElement>)=>{
+    setHospitals(
+      hospitalInfoService.filterHospitals(originals, e.target.value)
+    )
+  }
 
   return (
     <Box>
@@ -40,6 +44,7 @@ export const SearchAndSort: React.FC<SearchAndSortProps> = ({getHospitalInfo}) =
       >
         <TextField
           placeholder="Search"
+          onChange={changeSearch}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -102,7 +107,7 @@ export const SearchAndSort: React.FC<SearchAndSortProps> = ({getHospitalInfo}) =
         </Button>
       </Box>
       {showFilters && (
-        <Filter open={showFilters} handleClose={handleCloseFilters} applyFilters={getHospitalInfo}/>
+        <Filter open={showFilters} handleClose={handleCloseFilters} />
       )}
     </Box>
   );

@@ -16,6 +16,13 @@ class HospitalInfoService {
       return hospitalInfo.status !== "past";
     }
   };
+
+  filterHospitals = (hospitals: HospitalInfo[], searchTrem: string) => {
+    return hospitals.filter(
+      (h: HospitalInfo) => h.name.toLowerCase().indexOf(searchTrem.toLowerCase()) > -1
+    );
+  };
+
   async getHospitalInfo(): Promise<HospitalInfo[]> {
     const TABLE = import.meta.env.VITE_AIRTABLE_TABLE_HOSPITAL_REFERENCE;
     const MAX_RECORDS = 100;
