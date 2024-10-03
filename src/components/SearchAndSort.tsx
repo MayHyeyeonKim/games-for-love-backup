@@ -16,7 +16,7 @@ import { hospitalInfoService } from "../services/hospitalInfo/hospitalInfoServic
 
 export const SearchAndSort = () => {
   const [showFilters, setShowFilters] = useState(false);
-  const { originals, setHospitals } = useContext(HospitalsContext);
+  const { originals, setHospitals, setSelectedHospital } = useContext(HospitalsContext);
 
   const handleOpenFilters = () => {
     setShowFilters(true);
@@ -27,11 +27,14 @@ export const SearchAndSort = () => {
   };
 
   const changeSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    //searching through originals
+    const searchValue = e.target.value;
     setHospitals(
-      hospitalInfoService.filterHospitals(originals, e.target.value)
+      hospitalInfoService.filterHospitals(originals, searchValue)
     );
-  };
+    if(searchValue === ""){
+      setSelectedHospital(undefined)
+    }
+  }
 
   return (
     <Box data-testid="search-and-sort-box">

@@ -30,7 +30,13 @@ export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({ hospital }
   }, [hospital, selectedHospital]);
 
   const handleCardClicked = ()=> {
-    hospital && setSelectedHospital(hospital);
+    if(hospital){
+      if(selectedHospital && selectedHospital.id === hospital.id){
+        setSelectedHospital(undefined)
+      } else {
+        setSelectedHospital(hospital);
+      }
+    }
   }
 
   return (

@@ -36,7 +36,9 @@ export const GFLMap = () => {
         zoom: zoom
       })
     },50)
-    }
+    } else {
+      setViewState(siteService.DEFAULT_VIEW)
+     }
   },[selectedHospital])
 
   return (
