@@ -13,10 +13,7 @@ import { SearchAndSort } from "./components/SearchAndSort";
 
 import "./App.css";
 import { HospitalInfo } from "./models/hospitalInfo";
-import { generalInfoService } from "./services/generalInfo/generalInfoService";
-import { hospitalFundedService } from "./services/hospitalFunded/hospitalFundedService";
 import { hospitalInfoService } from "./services/hospitalInfo/hospitalInfoService";
-import { hospitalRequestService } from "./services/hospitalRequest/hospitalRequestService";
 import { FilterType } from "./types/fillterType";
 import { HospitalsContext } from "./context/HospitalsContext";
 

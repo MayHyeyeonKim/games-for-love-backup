@@ -20,6 +20,10 @@ interface HospitalContextType {
     setOriginalFilters: (filters: FilterType) => void;
     filters: FilterType;
     setFilters: (filters: FilterType) => void;
+    selectedHospital: HospitalInfo | undefined
+    setSelectedHospital: (selection: HospitalInfo | undefined) => void;
+    // selection: HospitalInfo | undefined;
+    // setSelection: (selection: HospitalInfo | undefined) => void;
 }
 
 export const HospitalsContext = createContext<HospitalContextType>({
@@ -31,12 +35,18 @@ export const HospitalsContext = createContext<HospitalContextType>({
     setOriginalFilters: ()=>{},
     filters: {location:[], status:[]},
     setFilters: ()=>{},
+    selectedHospital: undefined,
+    setSelectedHospital: ()=>{},
+    // selection: undefined,
+    // setSelection: ()=>{}
+
 })
 
 export const HospitalsContextProvider = (props:{children: ReactNode}) => {
     const [originals, setOriginals] = useState<HospitalInfo[]>([])
     const [hospitals, setHospitals] = useState<HospitalInfo[]>([])
-
+    const [selectedHospital, setSelectedHospital] = useState<HospitalInfo | undefined>();
+    // const [selection, setSelection] = useState<HospitalInfo | undefined>();
     const [originalFilters, setOriginalFilters] = useState<FilterType>({
         location: [],
         status: [],
@@ -56,10 +66,14 @@ export const HospitalsContextProvider = (props:{children: ReactNode}) => {
         setFilters(originalFilters)
     },[originalFilters]);
 
+    // useEffect(()=>{
+    //     setSelectedHospital(selection);
+    // },[selection])
+
     return (
         <HospitalsContext.Provider
         value={{
-            hospitals, setHospitals, originals, setOriginals, filters, setFilters, originalFilters, setOriginalFilters,
+            hospitals, setHospitals, originals, setOriginals, filters, setFilters, originalFilters, setOriginalFilters, selectedHospital, setSelectedHospital, 
         }}
         >
             {props.children}

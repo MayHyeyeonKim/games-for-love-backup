@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -11,6 +11,7 @@ import {
 
 import { Pin } from "../components/Pin";
 import { HospitalInfo } from "../models/hospitalInfo";
+import { HospitalsContext } from "../context/HospitalsContext";
 
 interface HospitalDetailsProps {
   hospital: HospitalInfo | null;
@@ -18,13 +19,23 @@ interface HospitalDetailsProps {
 
 export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({ hospital }) => {
   const [images, setImages] = useState<string[]>([]);
+  const { setSelectedHospital} = useContext(HospitalsContext);
+
   useEffect(() => {
     if (hospital) {
       setImages(hospital.hospitalPicture1);
     }
   }, [hospital]);
+
+  const handleCardClicked = ()=> {
+    hospital && setSelectedHospital(hospital);
+  }
+
   return (
-    <>
+    <div
+      style={{cursor: "pointer"}}
+      onClick={()=>handleCardClicked()}
+    >
       <Card
         sx={{
           display: "flex",
@@ -129,6 +140,6 @@ export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({ hospital }
           </Typography>
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 };
