@@ -22,13 +22,23 @@ export const GFLMap = () => {
 
   useEffect(()=>{
     if(selectedHospital){
+    let zoom = siteService.DEFAULT_VIEW.zoom
+    const targetZoom = 15;
+    const zoomInterval = setInterval(()=>{
+      zoom += 0.1;
+      if(zoom >= targetZoom){
+        clearInterval(zoomInterval);
+        zoom = targetZoom
+      }
       setViewState({
         longitude: selectedHospital.longitude,
         latitude: selectedHospital.latitude,
-        zoom: siteService.DEFAULT_VIEW.zoom
+        zoom: zoom
       })
+    },50)
     }
   },[selectedHospital])
+
 
   return (
     <Map
@@ -46,6 +56,7 @@ export const GFLMap = () => {
           selectedHospital && selectedHospital.id === hospital.id;
         return (
           <Marker
+            style={{display: isHospitalSelected || !selectedHospital ? "block": "none"}}
             color={
               hospital.status === "past"
                 ? CLOSED_MARKER_COLOR

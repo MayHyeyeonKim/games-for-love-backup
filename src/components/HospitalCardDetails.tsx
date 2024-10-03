@@ -19,13 +19,15 @@ interface HospitalDetailsProps {
 
 export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({ hospital }) => {
   const [images, setImages] = useState<string[]>([]);
-  const { setSelectedHospital} = useContext(HospitalsContext);
+  const { setSelectedHospital, selectedHospital} = useContext(HospitalsContext);
+  const [backgroundColor, setBackgroundColor] = useState<string>();
 
   useEffect(() => {
     if (hospital) {
       setImages(hospital.hospitalPicture1);
+      setBackgroundColor(selectedHospital ? hospital.id === selectedHospital.id ? '#f0f5fb' : '' : '');
     }
-  }, [hospital]);
+  }, [hospital, selectedHospital]);
 
   const handleCardClicked = ()=> {
     hospital && setSelectedHospital(hospital);
@@ -42,6 +44,7 @@ export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({ hospital }
           alignItems: "center",
           padding: 2,
           margin: "10px 0",
+          backgroundColor: backgroundColor
         }}
       >
         <CardMedia
