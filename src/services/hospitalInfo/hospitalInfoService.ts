@@ -2,7 +2,7 @@ import { airtableService } from "../../mapping/airtableService";
 import { HospitalInfo } from "../../models/hospitalInfo";
 
 import thumbnailData from "../../../test/thumbnailData.json";
-import { Filter } from "../../types/filter";
+import { FilterType } from "../../types/fillterType";
 
 const extractUrls = (attachments: any) => {
   return attachments ? attachments.map((att: any) => att.url) : [];
@@ -17,9 +17,10 @@ class HospitalInfoService {
     }
   };
 
-  filterHospitals = (hospitals: HospitalInfo[], searchTrem: string) => {
+  filterHospitals = (hospitals: HospitalInfo[], searchTerm: string) => {
     return hospitals.filter(
-      (h: HospitalInfo) => h.name.toLowerCase().indexOf(searchTrem.toLowerCase()) > -1
+      (h: HospitalInfo) =>
+        h.name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1
     );
   };
 
@@ -50,7 +51,7 @@ class HospitalInfoService {
   }
 }
 class MockHospitalInfoService extends HospitalInfoService {
-  async getHospitalInfo(filter?: Filter): Promise<HospitalInfo[]> {
+  async getHospitalInfo(filter?: FilterType): Promise<HospitalInfo[]> {
     const hospitals = thumbnailData.map((data) => {
       return {
         id: data["ID"],
@@ -69,12 +70,7 @@ class MockHospitalInfoService extends HospitalInfoService {
         hospitalPicture1: extractUrls(data["Hospital Picture 1"]),
       } as HospitalInfo;
     });
-
-    console.log("Original hospitals은 이렇게 생겼어:", hospitals);
-
     if (filter) {
-      console.log("Filter잘들어왔어?:", filter);
-
       const filtered_hospitals = hospitals.filter(
         (hospital) =>
           (filter.location.includes(hospital.state.toLowerCase()) ||
@@ -82,7 +78,6 @@ class MockHospitalInfoService extends HospitalInfoService {
             filter.location.includes(hospital.zip.toLowerCase())) &&
           filter.status.includes(hospital.status.toLowerCase())
       );
-      console.log("filtered_hospitals잘나오지?: ", filtered_hospitals)
       return filtered_hospitals;
     } else {
       return hospitals;

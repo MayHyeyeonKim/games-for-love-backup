@@ -15,8 +15,8 @@ import { HospitalsContext } from "../context/HospitalsContext";
 import { hospitalInfoService } from "../services/hospitalInfo/hospitalInfoService";
 
 export const SearchAndSort = () => {
-  const {originals, setHospitals} = useContext(HospitalsContext)
   const [showFilters, setShowFilters] = useState(false);
+  const { originals, setHospitals } = useContext(HospitalsContext);
 
   const handleOpenFilters = () => {
     setShowFilters(true);
@@ -26,14 +26,15 @@ export const SearchAndSort = () => {
     setShowFilters(false);
   };
 
-  const changeSearch = (e: ChangeEvent<HTMLInputElement>)=>{
+  const changeSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    //searching through originals
     setHospitals(
       hospitalInfoService.filterHospitals(originals, e.target.value)
-    )
-  }
+    );
+  };
 
   return (
-    <Box>
+    <Box data-testid="search-and-sort-box">
       <Box
         sx={{
           display: "flex",
