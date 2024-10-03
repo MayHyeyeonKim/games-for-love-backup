@@ -8,7 +8,7 @@ import Map from "react-map-gl/maplibre";
 import { PopupInfo } from "../models/popupInfo";
 import { GFLPopup } from "./GFLPopup";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import { siteService } from "../services/siteUtils";
 import { HospitalsContext } from "../context/HospitalsContext";
@@ -19,6 +19,17 @@ export const GFLMap = () => {
   const { hospitals, selectedHospital } = useContext(HospitalsContext);
   const [viewState, setViewState] = useState(siteService.DEFAULT_VIEW);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+
+  useEffect(()=>{
+    if(selectedHospital){
+      setViewState({
+        longitude: selectedHospital.longitude,
+        latitude: selectedHospital.latitude,
+        zoom: siteService.DEFAULT_VIEW.zoom
+      })
+    }
+  },[selectedHospital])
+
   return (
     <Map
       {...viewState}
