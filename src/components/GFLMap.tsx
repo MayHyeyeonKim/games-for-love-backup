@@ -39,7 +39,6 @@ export const GFLMap = () => {
     }
   },[selectedHospital])
 
-
   return (
     <Map
       {...viewState}
