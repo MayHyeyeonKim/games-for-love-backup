@@ -1,5 +1,5 @@
 /**
- *  App.ts
+ *  App.tsx
  *
  *  @copyright 2024 Digital Aid Seattle
  *
@@ -12,17 +12,18 @@ import { HospitalCardDetails } from "./components/HospitalCardDetails";
 import { SearchAndSort } from "./components/SearchAndSort";
 
 import "./App.css";
+import { HospitalsContext } from "./context/HospitalsContext";
 import { HospitalInfo } from "./models/hospitalInfo";
 import { hospitalInfoService } from "./services/hospitalInfo/hospitalInfoService";
 import { FilterType } from "./types/fillterType";
-import { HospitalsContext } from "./context/HospitalsContext";
+import { SelectedHospitalsContextProvider } from "./components/SelectedHospitalContext";
 
-const HospitalList = ()=>{
-  const {hospitals} = useContext(HospitalsContext);
-  return hospitals.map((hospital, idx:number)=>(
-    <HospitalCardDetails key={`h-${idx}`} hospital={hospital} />
-  ))
-}
+const HospitalList = () => {
+  const { hospitals } = useContext(HospitalsContext);
+  return hospitals.map((hospital, idx: number) => (
+    <HospitalCardDetails key={`h-${idx})`} hospital={hospital} />
+  ));
+};
 
 function App() {
   const { setOriginals } = useContext(HospitalsContext);
@@ -30,12 +31,13 @@ function App() {
 
   const getHospitalInfo = (filter?: FilterType) => {
     hospitalInfoService
-    .getHospitalInfo(filter)
-    .then((res: HospitalInfo[]) => {
-      setOriginals(res)
-    }).catch(error => {
-      console.error("An error occurred while fetching data:", error);
-    });
+      .getHospitalInfo(filter)
+      .then((res: HospitalInfo[]) => {
+        setOriginals(res);
+      })
+      .catch((error) => {
+        console.error("An error occurred while fetching data:", error);
+      });
   };
 
   useEffect(() => {
@@ -49,23 +51,25 @@ function App() {
   }, []);
 
   return (
-    <Grid container>
-      <Grid item xs={12} lg={5}>
-        <Box sx={{ height: windowHeight, overflowY: "auto" }}>
-          <Box padding={1}>
-            <SearchAndSort />
+    <SelectedHospitalsContextProvider>
+      <Grid container>
+        <Grid item xs={12} lg={5}>
+          <Box sx={{ height: windowHeight, overflowY: "auto" }}>
+            <Box padding={1}>
+              <SearchAndSort />
+            </Box>
+            <Box padding={1}>
+              <HospitalList />
+            </Box>
           </Box>
-          <Box padding={1}>
-            <HospitalList />
+        </Grid>
+        <Grid item xs={12} lg={7}>
+          <Box height={windowHeight} data-testid="gfl-map-box">
+            <GFLMap />
           </Box>
-        </Box>
+        </Grid>
       </Grid>
-      <Grid item xs={12} lg={7}>
-        <Box height={windowHeight}>
-          <GFLMap />
-        </Box>
-      </Grid>
-    </Grid>
+    </SelectedHospitalsContextProvider>
   );
 }
 

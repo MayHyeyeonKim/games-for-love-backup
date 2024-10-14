@@ -23,8 +23,10 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { InputAdornment } from "@mui/material";
 import { hospitalInfoService } from "../services/hospitalInfo/hospitalInfoService";
 import { HospitalsContext } from "../context/HospitalsContext";
+import { FilterContext } from "../context/FilterContext";
+import { DialogProps } from "../types/dialogProps";
 
-const BootstrapDialog = styled(Dialog)(() => ({
+const CustomDialog = styled(Dialog)(() => ({
   "& .MuiDialog-paper": {
     width: "400px",
     height: "480px",
@@ -34,14 +36,9 @@ const BootstrapDialog = styled(Dialog)(() => ({
   },
 }));
 
-interface FilterProps {
-  open: boolean;
-  handleClose: () => void;
-}
-
-const Filter: React.FC<FilterProps> = ({ open, handleClose }) => {
-  const { setOriginals, setOriginalFilters, filters } =
-    useContext(HospitalsContext);
+const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
+  const { setOriginals } = useContext(HospitalsContext);
+  const { setOriginalFilters, filters } = useContext(FilterContext);
   const [locationValue, setLocationValue] = useState<string>("");
   const [locationChips, setLocationChips] = useState<string[]>(
     filters.location
@@ -129,7 +126,7 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose }) => {
   }, []);
 
   return (
-    <BootstrapDialog
+    <CustomDialog
       onClose={handleClose}
       open={open}
       aria-labelledby="filter-hospital-dialog"
@@ -369,8 +366,8 @@ const Filter: React.FC<FilterProps> = ({ open, handleClose }) => {
           Apply filters
         </Button>
       </DialogActions>
-    </BootstrapDialog>
+    </CustomDialog>
   );
 };
 
-export default Filter;
+export default FilterDialog;

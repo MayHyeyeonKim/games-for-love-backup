@@ -10,13 +10,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import ImportExportIcon from "@mui/icons-material/ImportExport";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
-import Filter from "../components/Filter";
+import FilterDialog from "./FilterDialog";
 import { HospitalsContext } from "../context/HospitalsContext";
 import { hospitalInfoService } from "../services/hospitalInfo/hospitalInfoService";
 
 export const SearchAndSort = () => {
   const [showFilters, setShowFilters] = useState(false);
-  const { originals, setHospitals, setSelectedHospital } = useContext(HospitalsContext);
+  const { originals, setHospitals } = useContext(HospitalsContext);
 
   const handleOpenFilters = () => {
     setShowFilters(true);
@@ -27,14 +27,11 @@ export const SearchAndSort = () => {
   };
 
   const changeSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    const searchValue = e.target.value;
+    //searching through originals
     setHospitals(
-      hospitalInfoService.filterHospitals(originals, searchValue)
+      hospitalInfoService.filterHospitals(originals, e.target.value)
     );
-    if(searchValue === ""){
-      setSelectedHospital(undefined)
-    }
-  }
+  };
 
   return (
     <Box data-testid="search-and-sort-box">
@@ -111,7 +108,7 @@ export const SearchAndSort = () => {
         </Button>
       </Box>
       {showFilters && (
-        <Filter open={showFilters} handleClose={handleCloseFilters} />
+        <FilterDialog open={showFilters} handleClose={handleCloseFilters} />
       )}
     </Box>
   );
