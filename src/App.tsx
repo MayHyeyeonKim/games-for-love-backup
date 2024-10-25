@@ -15,7 +15,11 @@ import "./App.css";
 import { HospitalInfo } from "./models/hospitalInfo";
 import { hospitalInfoService } from "./services/hospitalInfo/hospitalInfoService";
 import { FilterType } from "./types/fillterType";
+<<<<<<< Updated upstream
 import { HospitalsContext } from "./context/HospitalsContext";
+=======
+import { SelectedHospitalsContextProvider } from "./context/SelectedHospitalContext";
+>>>>>>> Stashed changes
 
 const HospitalList = ()=>{
   const {hospitals} = useContext(HospitalsContext);
@@ -49,6 +53,7 @@ function App() {
   }, []);
 
   return (
+<<<<<<< Updated upstream
     <Grid container>
       <Grid item xs={12} lg={5}>
         <Box sx={{ height: windowHeight, overflowY: "auto" }}>
@@ -57,6 +62,23 @@ function App() {
           </Box>
           <Box padding={1}>
             <HospitalList />
+=======
+    <SelectedHospitalsContextProvider>
+      <Grid container>
+        <Grid item xs={12} lg={7}>
+          <Box sx={{ height: windowHeight, overflowY: "auto" }}>
+            <Box padding={1}>
+              <SearchAndSort />
+            </Box>
+            <Box padding={1}  data-testid="hospital-list">
+              <HospitalList />
+            </Box>
+          </Box>
+        </Grid>
+        <Grid item xs={12} lg={5}>
+          <Box height={windowHeight} data-testid="gfl-map-box">
+            <GFLMap />
+>>>>>>> Stashed changes
           </Box>
         </Box>
       </Grid>

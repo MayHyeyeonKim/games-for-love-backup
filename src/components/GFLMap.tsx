@@ -11,9 +11,13 @@ import { GFLPopup } from "./GFLPopup";
 import { useContext, useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import { siteService } from "../services/siteUtils";
+<<<<<<< Updated upstream
 import { HospitalsContext } from "../context/HospitalsContext";
 import { OPEN_MARKER_COLOR, CLOSED_MARKER_COLOR } from "../../src/styles/theme";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+=======
+import { SelectedHospitalContext } from "../context/SelectedHospitalContext";
+>>>>>>> Stashed changes
 
 export const GFLMap = () => {
   const { hospitals, selectedHospital } = useContext(HospitalsContext);
