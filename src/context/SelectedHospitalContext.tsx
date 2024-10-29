@@ -9,20 +9,27 @@
 import { ReactNode, createContext, useState } from "react";
 import { Hospital } from "../models/hospital";
 
-interface HospitalContextType {
+interface SelectedHospitalContextType {
   selectedHospital: Hospital | undefined;
   setSelectedHospital: (hospital: Hospital | undefined) => void;
 }
 
-export const SelectedHospitalContext = createContext<HospitalContextType>({
-  selectedHospital: undefined,
-  setSelectedHospital: () => {},
-});
+export const SelectedHospitalContext =
+  createContext<SelectedHospitalContextType>({
+    selectedHospital: undefined,
+    setSelectedHospital: () => {},
+  });
 
-export const SelectedHospitalsContextProvider = (props: { children: ReactNode }) => {
-  const [selectedHospital, setSelectedHospital] = useState<Hospital | undefined>(undefined);
+export const SelectedHospitalsContextProvider = (props: {
+  children: ReactNode;
+}) => {
+  const [selectedHospital, setSelectedHospital] = useState<
+    Hospital | undefined
+  >(undefined);
   return (
-    <SelectedHospitalContext.Provider value={{ selectedHospital, setSelectedHospital }}>
+    <SelectedHospitalContext.Provider
+      value={{ selectedHospital, setSelectedHospital }}
+    >
       {props.children}
     </SelectedHospitalContext.Provider>
   );
