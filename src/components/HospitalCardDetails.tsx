@@ -4,82 +4,32 @@
  *  @copyright 2024 Digital Aid Seattle
  *
  */
-import {
-  Avatar,
-  Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Stack,
-  Typography,
-<<<<<<< Updated upstream
-  Button,
-  Avatar,
-=======
->>>>>>> Stashed changes
-} from "@mui/material";
+import { Avatar, Box, Card, CardActionArea, CardContent, CardMedia, Stack, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 
 import { Room } from "@mui/icons-material";
 import { Carousel } from "react-responsive-carousel";
-import { HospitalInfo } from "../models/hospitalInfo";
-<<<<<<< Updated upstream
-import { HospitalsContext } from "../context/HospitalsContext";
-=======
-import ActionButton from "../styles/ActionButton";
 import { SelectedHospitalContext } from "../context/SelectedHospitalContext";
->>>>>>> Stashed changes
+import ActionButton from "../styles/ActionButton";
+import { Hospital } from "../models/hospital";
 
 interface HospitalDetailsProps {
-  hospital: HospitalInfo | null;
+  hospital: Hospital;
 }
 
-<<<<<<< Updated upstream
 export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({ hospital }) => {
-  const [images, setImages] = useState<string[]>([]);
-  const { setSelectedHospital, selectedHospital} = useContext(HospitalsContext);
-=======
-export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({
-  hospital,
-}) => {
-  const { selectedHospital, setSelectedHospital } = useContext(
-    SelectedHospitalContext
-  );
->>>>>>> Stashed changes
+  const { selectedHospital, setSelectedHospital } = useContext(SelectedHospitalContext);
   const [backgroundColor, setBackgroundColor] = useState<string>();
   const [pinColor, setPinColor] = useState<string>();
 
   useEffect(() => {
     if (hospital) {
-<<<<<<< Updated upstream
-      setImages(hospital.hospitalPicture1);
-      setBackgroundColor(selectedHospital ? hospital.id === selectedHospital.id ? '#f0f5fb' : '' : '');
-    }
-  }, [hospital, selectedHospital]);
-
-  const handleCardClicked = ()=> {
-    if(hospital){
-      if(selectedHospital && selectedHospital.id === hospital.id){
-        setSelectedHospital(undefined)
-      } else {
-        setSelectedHospital(hospital);
-      }
-=======
-      setBackgroundColor(
-        selectedHospital
-          ? hospital.id === selectedHospital.id
-            ? "#F0F5FA"
-            : ""
-          : ""
-      );
+      setBackgroundColor(selectedHospital ? (hospital.id === selectedHospital.id ? "#F0F5FA" : "") : "");
       setPinColor(
-        selectedHospital
-          ? hospital.id === selectedHospital.id
-            ? hospital.status === "past"
-              ? "#DB5757"
-              : "#92C65E"
-            : "#92C65E"
+        selectedHospital && hospital.id === selectedHospital.id
+          ? "#FFFF00"
+          : hospital.status === "past"
+          ? "#DB5757"
           : "#92C65E"
       );
     }
@@ -88,13 +38,12 @@ export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({
   const changeSelectedHospital = () => {
     if (selectedHospital) {
       if (hospital.id === selectedHospital.id) {
-        setSelectedHospital(undefined);
+        setSelectedHospital(null);
       } else {
         setSelectedHospital(hospital);
       }
     } else {
       setSelectedHospital(hospital);
->>>>>>> Stashed changes
     }
   };
 
@@ -111,121 +60,36 @@ export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({
   };
 
   return (
-    <div
-      style={{cursor: "pointer"}}
-      onClick={()=>handleCardClicked()}
-    >
+    <div data-testid="hospital-detail-card">
       <Card
         sx={{
           display: "flex",
           alignItems: "center",
-          padding: 2,
           margin: "10px 0",
-<<<<<<< Updated upstream
-          backgroundColor: backgroundColor
-=======
           cursor: "pointer",
           backgroundColor: backgroundColor,
->>>>>>> Stashed changes
         }}
+        onClick={changeSelectedHospital}
       >
-        <CardMedia
-          component="img"
-          sx={{ width: 120, height: 120, borderRadius: 2 }}
-          image={images[0]}
-          alt="Hospital Image"
-        />
-        <CardContent
-          sx={{ flex: 1, padding: "0 16px", borderRight: "1px solid #d9d9d9" }}
+        <CardActionArea
+          sx={{
+            display: "flex",
+            padding: 2,
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            height: "100%",
+            "&:focus": {
+              outline: "none",
+            },
+            "&:focus-visible": {
+              outline: "none",
+            },
+            "& .MuiCardActionArea-focusHighlight": {
+              background: "transparent",
+            },
+          }}
         >
-<<<<<<< Updated upstream
-          <Typography variant="subtitle2" color="textSecondary">
-            <Pin /> {hospital?.city}, {hospital?.state}
-          </Typography>
-
-          <Typography variant="h6" component="div">
-            {hospital?.name}
-          </Typography>
-
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{ fontStyle: "italic" }}
-          >
-            {hospital?.description}
-          </Typography>
-
-          <Typography
-            variant="body2"
-            color="primary"
-            sx={{ marginTop: 1, color: "#2293C4" }}
-          >
-            LEARN MORE &gt;
-          </Typography>
-        </CardContent>
-
-        <CardContent sx={{ flex: 1 }}>
-          <Typography variant="body2" color="textSecondary">
-            <span style={{ color: "black" }}>25k </span> raised of 100k -{" "}
-            <Typography
-              variant="body2"
-              component="span"
-              color="success.main"
-              sx={{ fontStyle: "italic", color: "#92c65e" }}
-            >
-              {hospital?.status}
-            </Typography>
-          </Typography>
-
-          <Typography variant="body2" color="textSecondary">
-            400+ kids impacted
-          </Typography>
-
-          <Box display="flex" alignItems="center" marginTop={1}>
-            <Typography variant="body2" color="textSecondary" marginRight={1}>
-              Matched by
-            </Typography>
-            <Avatar
-              alt="Organization Logo"
-              src="/path/to/profile1.jpg"
-              sx={{ width: 20, height: 20, marginLeft: 1 }}
-            />
-            <Avatar
-              alt="Organization Logo"
-              src="/path/to/profile2.jpg"
-              sx={{ width: 20, height: 20, marginLeft: 1 }}
-            />
-            +
-          </Box>
-
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{
-              marginTop: 2,
-              width: "100%",
-              backgroundColor: "#000",
-              borderRadius: "40px",
-              textTransform: "capitalize",
-              "&:hover": {
-                backgroundColor: "transparent",
-                color: "#000",
-              },
-            }}
-          >
-            Donate
-          </Button>
-
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            align="center"
-            sx={{ marginTop: 1 }}
-          >
-            15 days left to donate!
-          </Typography>
-        </CardContent>
-=======
           <Stack direction={"row"}>
             <CardContent
               sx={{
@@ -325,11 +189,7 @@ export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({
               </Typography>
 
               <Box display="flex" alignItems="center" marginTop={1}>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  marginRight={1}
-                >
+                <Typography variant="body2" color="textSecondary" marginRight={1}>
                   Matched by
                 </Typography>
                 <Avatar
@@ -344,18 +204,12 @@ export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({
                 />
                 +
               </Box>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                align="center"
-                sx={{ marginTop: 1 }}
-              >
+              <Typography variant="body2" color="textSecondary" align="center" sx={{ marginTop: 1 }}>
                 15 days left to donate!
               </Typography>
             </CardContent>
           </Stack>
         </CardActionArea>
->>>>>>> Stashed changes
       </Card>
     </div>
   );

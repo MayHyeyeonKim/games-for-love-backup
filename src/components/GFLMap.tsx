@@ -1,97 +1,83 @@
-import {
-  FullscreenControl,
-  Marker,
-  NavigationControl,
-  ScaleControl,
-} from "react-map-gl";
+import { FullscreenControl, Marker, NavigationControl, ScaleControl } from "react-map-gl";
 import Map from "react-map-gl/maplibre";
 import { PopupInfo } from "../models/popupInfo";
 import { GFLPopup } from "./GFLPopup";
 
-import { useContext, useState, useEffect } from "react";
+import { Room } from "@mui/icons-material";
 import { Box } from "@mui/material";
+import { useContext, useEffect, useRef, useState } from "react";
+import { HospitalInfoContext } from "../context/HospitalInfoContext";
+import { HospitalInfo } from "../models/hospitalInfo";
 import { siteService } from "../services/siteUtils";
-<<<<<<< Updated upstream
-import { HospitalsContext } from "../context/HospitalsContext";
-import { OPEN_MARKER_COLOR, CLOSED_MARKER_COLOR } from "../../src/styles/theme";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-=======
 import { SelectedHospitalContext } from "../context/SelectedHospitalContext";
->>>>>>> Stashed changes
+import { HospitalsContext } from "../context/HospitalContext";
+import { Hospital } from "../models/hospital";
 
 export const GFLMap = () => {
-  const { hospitals, selectedHospital } = useContext(HospitalsContext);
+  // TODO figure out why useRef<MapRef> does not compile
+  const markerRef = useRef<any>();
+  const { hospitals } = useContext(HospitalsContext);
   const [viewState, setViewState] = useState(siteService.DEFAULT_VIEW);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+  const { selectedHospital } = useContext(SelectedHospitalContext);
 
-  useEffect(()=>{
-    if(selectedHospital){
-    let zoom = siteService.DEFAULT_VIEW.zoom
-    const targetZoom = 15;
-    const zoomInterval = setInterval(()=>{
-      zoom += 0.1;
-      if(zoom >= targetZoom){
-        clearInterval(zoomInterval);
-        zoom = targetZoom
-      }
-      setViewState({
-        longitude: selectedHospital.longitude,
-        latitude: selectedHospital.latitude,
-        zoom: zoom
-      })
-    },50)
-    } else {
-      setViewState(siteService.DEFAULT_VIEW)
-     }
-  },[selectedHospital])
+  useEffect(() => {
+    if (selectedHospital) {
+      markerRef.current?.flyTo({
+        center: [selectedHospital.longitude, selectedHospital.latitude],
+        duration: 2000,
+      });
+    }
+  }, [selectedHospital]);
+
+  const isHospitalSelected = (hospital: Hospital): boolean => {
+    return selectedHospital ? hospital.id === selectedHospital.id : false;
+  };
 
   return (
     <Map
       {...viewState}
+      ref={markerRef}
       onMove={(evt) => setViewState(evt.viewState)}
-      mapStyle={`${import.meta.env.VITE_MAP_STYLE}?key=${
-        import.meta.env.VITE_MAPTILER_API_KEY
-      }`}
+      mapStyle={`${import.meta.env.VITE_MAP_STYLE}?key=${import.meta.env.VITE_MAPTILER_API_KEY}`}
     >
       <FullscreenControl position="top-left" />
       <NavigationControl position="top-left" />
       <ScaleControl />
-      {hospitals.map((hospital) => {
-        const isHospitalSelected =
-          selectedHospital && selectedHospital.id === hospital.id;
+      {hospitals?.map((hospital) => {
+        const isAnimated = isHospitalSelected(hospital);
         return (
           <Marker
-            style={{display: isHospitalSelected || !selectedHospital ? "block": "none"}}
-            color={
-              hospital.status === "past"
-                ? CLOSED_MARKER_COLOR
-                : OPEN_MARKER_COLOR
-            }
             key={hospital.id}
             longitude={hospital.longitude}
             latitude={hospital.latitude}
             onClick={() =>
               setPopupInfo({
-                hospitalInfo: hospital,
+                hospital: hospital,
               })
             }
+            anchor="bottom"
+            style={{
+              cursor: "pointer",
+            }}
           >
             <div
               style={{
                 position: "relative",
                 transition: "transform 0.3s ease",
-                transform: isHospitalSelected ? "scale(1.5)" : "scale(1)",
+                transform: isAnimated ? "scale(1.5)" : "scale(1)",
               }}
             >
-              <LocationOnIcon
+              <Room
                 sx={{
-                  color:
-                    hospital.status === "past"
-                      ? CLOSED_MARKER_COLOR
-                      : OPEN_MARKER_COLOR,
-                  strokeWidth: isHospitalSelected ? "1px" : "0.2px",
-                  stroke: "Black",
+                  color: isAnimated ? "#FFFF00" : hospital.status === "past" ? "#DB5757" : "#92C65E",
+                  strokeWidth: "0.2px",
+                  stroke: "black",
                   fontSize: "3rem",
+                  "& .MuiSvgIcon-root": {
+                    outline: "1px solid red",
+                    outlineOffset: "2px",
+                  },
                 }}
               />
             </div>
