@@ -17,9 +17,9 @@ interface FilterContextType {
 }
 
 export const FilterContext = createContext<FilterContextType>({
-  filters: { location: [], status: [] },
+  filters: { location: [], status: [], sortBy: "fundingDeadline", sortDirection: false },
   setFilters: () => {},
-  originalFilters: { location: [], status: [] },
+  originalFilters: { location: [], status: [], sortBy: "fundingDeadline", sortDirection: false },
   setOriginalFilters: () => {},
 });
 
@@ -27,11 +27,15 @@ export const FilterContextProvider = (props: { children: ReactNode }) => {
   const [filters, setFilters] = useState<FilterType>({
     location: [],
     status: [],
+    sortBy: "fundingDeadline",
+    sortDirection: false,
   });
 
   const [originalFilters, setOriginalFilters] = useState<FilterType>({
     location: [],
     status: [],
+    sortBy: "fundingDeadline",
+    sortDirection: false,
   });
 
   useEffect(() => {

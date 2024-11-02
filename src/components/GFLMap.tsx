@@ -1,4 +1,15 @@
-import { FullscreenControl, Marker, NavigationControl, ScaleControl } from "react-map-gl";
+/**
+ *  GFLMap.tsx
+ *
+ *  @copyright 2024 Digital Aid Seattle
+ *
+ */
+import {
+  FullscreenControl,
+  Marker,
+  NavigationControl,
+  ScaleControl,
+} from "react-map-gl";
 import Map from "react-map-gl/maplibre";
 import { PopupInfo } from "../models/popupInfo";
 import { GFLPopup } from "./GFLPopup";
@@ -6,8 +17,6 @@ import { GFLPopup } from "./GFLPopup";
 import { Room } from "@mui/icons-material";
 import { Box } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
-import { HospitalInfoContext } from "../context/HospitalInfoContext";
-import { HospitalInfo } from "../models/hospitalInfo";
 import { siteService } from "../services/siteUtils";
 import { SelectedHospitalContext } from "../context/SelectedHospitalContext";
 import { HospitalsContext } from "../context/HospitalContext";
@@ -39,7 +48,9 @@ export const GFLMap = () => {
       {...viewState}
       ref={markerRef}
       onMove={(evt) => setViewState(evt.viewState)}
-      mapStyle={`${import.meta.env.VITE_MAP_STYLE}?key=${import.meta.env.VITE_MAPTILER_API_KEY}`}
+      mapStyle={`${import.meta.env.VITE_MAP_STYLE}?key=${
+        import.meta.env.VITE_MAPTILER_API_KEY
+      }`}
     >
       <FullscreenControl position="top-left" />
       <NavigationControl position="top-left" />
@@ -70,7 +81,11 @@ export const GFLMap = () => {
             >
               <Room
                 sx={{
-                  color: isAnimated ? "#FFFF00" : hospital.status === "past" ? "#DB5757" : "#92C65E",
+                  color: isAnimated
+                    ? "#FFFF00"
+                    : hospital.status === "past"
+                    ? "#DB5757"
+                    : "#92C65E",
                   strokeWidth: "0.2px",
                   stroke: "black",
                   fontSize: "3rem",

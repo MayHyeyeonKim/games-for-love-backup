@@ -4,7 +4,16 @@
  *  @copyright 2024 Digital Aid Seattle
  *
  */
-import { Avatar, Box, Card, CardActionArea, CardContent, CardMedia, Stack, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 
 import { Room } from "@mui/icons-material";
@@ -17,14 +26,24 @@ interface HospitalDetailsProps {
   hospital: Hospital;
 }
 
-export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({ hospital }) => {
-  const { selectedHospital, setSelectedHospital } = useContext(SelectedHospitalContext);
+export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({
+  hospital,
+}) => {
+  const { selectedHospital, setSelectedHospital } = useContext(
+    SelectedHospitalContext
+  );
   const [backgroundColor, setBackgroundColor] = useState<string>();
   const [pinColor, setPinColor] = useState<string>();
 
   useEffect(() => {
     if (hospital) {
-      setBackgroundColor(selectedHospital ? (hospital.id === selectedHospital.id ? "#F0F5FA" : "") : "");
+      setBackgroundColor(
+        selectedHospital
+          ? hospital.id === selectedHospital.id
+            ? "#F0F5FA"
+            : ""
+          : ""
+      );
       setPinColor(
         selectedHospital && hospital.id === selectedHospital.id
           ? "#FFFF00"
@@ -38,7 +57,7 @@ export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({ hospital }
   const changeSelectedHospital = () => {
     if (selectedHospital) {
       if (hospital.id === selectedHospital.id) {
-        setSelectedHospital(null);
+        setSelectedHospital(undefined);
       } else {
         setSelectedHospital(hospital);
       }
@@ -189,7 +208,11 @@ export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({ hospital }
               </Typography>
 
               <Box display="flex" alignItems="center" marginTop={1}>
-                <Typography variant="body2" color="textSecondary" marginRight={1}>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  marginRight={1}
+                >
                   Matched by
                 </Typography>
                 <Avatar
@@ -204,7 +227,12 @@ export const HospitalCardDetails: React.FC<HospitalDetailsProps> = ({ hospital }
                 />
                 +
               </Box>
-              <Typography variant="body2" color="textSecondary" align="center" sx={{ marginTop: 1 }}>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                align="center"
+                sx={{ marginTop: 1 }}
+              >
                 15 days left to donate!
               </Typography>
             </CardContent>

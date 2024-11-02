@@ -1,3 +1,9 @@
+/**
+ *  FilterDialog.tsx
+ *
+ *  @copyright 2024 Digital Aid Seattle
+ *
+ */
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import {
   Dialog,
@@ -21,12 +27,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/material/styles";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { InputAdornment } from "@mui/material";
-import { hospitalInfoService } from "../services/hospitalInfo/hospitalInfoService";
-import { HospitalInfoContext } from "../context/HospitalInfoContext";
 import { FilterContext } from "../context/FilterContext";
 import { DialogProps } from "../types/dialogProps";
 import { hospitalService } from "../services/hospital/hospitalService";
 import { HospitalsContext } from "../context/HospitalContext";
+import { FilterType } from "../types/fillterType";
 
 const CustomDialog = styled(Dialog)(() => ({
   "& .MuiDialog-paper": {
@@ -39,14 +44,12 @@ const CustomDialog = styled(Dialog)(() => ({
 }));
 
 const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
-  const { setOriginalInfo } = useContext(HospitalInfoContext);
+  const { hospitals, setOriginals } = useContext(HospitalsContext);
   const { setOriginalFilters, filters } = useContext(FilterContext);
-  const { setOriginals } = useContext(HospitalsContext);
   const [locationValue, setLocationValue] = useState<string>("");
   const [locationChips, setLocationChips] = useState<string[]>(filters.location);
 
   const [status, setStatus] = useState("all");
-  const [sortBy, setSortBy] = useState("fundingDeadline");
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && locationValue.trim() !== "") {
@@ -64,16 +67,21 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
   };
 
   const handleSortbyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSortBy(e.target.value);
+    setOriginalFilters({ ...filters, sortBy: e.target.value });
   };
 
   const handleApplyFilters = async () => {
     if (filters.location.length === 0 && filters.status.length === 0) {
-      hospitalInfoService.getHospitalInfo().then((res) => setOriginalInfo(res));
+      hospitalService.combineHospitalInfoAndRequestAndFunded().then((res) => setOriginals(res));
+      const sortedHospitals = hospitalService.sortingHospitals(hospitals, filters.sortBy, false);
+      setOriginals(sortedHospitals);
     } else {
-      const filteredHospitals = await hospitalService.combineHospitalInfoAndFundedAndRequest(filters);
-      setOriginals(filteredHospitals);
+      console.log(filters);
+      const filteredHospitals = await hospitalService.combineHospitalInfoAndRequestAndFunded(filters);
+      const sortedHospitals = hospitalService.sortingHospitals(filteredHospitals, filters.sortBy, false);
+      setOriginals(sortedHospitals);
     }
+
     handleClose();
   };
 
@@ -83,21 +91,32 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
     setOriginalFilters({
       location: [],
       status: [],
+      sortBy: "fundingDeadline",
+      sortDirection: false,
     });
-    const hospitals = await hospitalService.combineHospitalInfoAndFundedAndRequest();
+    const hospitals = await hospitalService.combineHospitalInfoAndRequestAndFunded();
     setOriginals(hospitals);
-    // hospitalInfoService.getHospitalInfo().then((res) => setOriginalInfo(res));
   };
 
   useEffect(() => {
-    setOriginalFilters({
+    const filter: FilterType = {
       location: locationChips.map((chip) => chip.toLowerCase()),
       status: [status],
-    });
+      sortBy: "fundingDeadline",
+      sortDirection: false,
+    };
+    const newFilter = status === "all" ? { ...filter, status: ["active", "past"] } : filter;
+    setOriginalFilters(newFilter);
   }, [locationChips, status]);
 
   useEffect(() => {
-    setStatus(filters.status.includes("active") ? "active" : filters.status.includes("past") ? "past" : "all");
+    let initialStatus;
+    if (filters.status.length === 2 || (!filters.status.includes("active") && !filters.status.includes("past"))) {
+      initialStatus = "all";
+    } else {
+      initialStatus = filters.status[0];
+    }
+    setStatus(initialStatus);
   }, []);
 
   return (
@@ -175,120 +194,121 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
             />
           ))}
         </Box>
-
-        <FormControl>
-          <FormLabel
-            component="legend"
-            sx={{
-              fontSize: "20px",
-              color: "#000",
-              fontWeight: "bold",
-              "&.Mui-focused": {
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <FormControl>
+            <FormLabel
+              component="legend"
+              sx={{
+                fontSize: "20px",
                 color: "#000",
-              },
-            }}
-          >
-            Status
-          </FormLabel>
-          <RadioGroup value={status} onChange={handleStatusChange} aria-label="status">
-            <FormControlLabel
-              value="all"
-              control={
-                <Radio
-                  sx={{
-                    "& .MuiSvgIcon-root": {
-                      color: "#000",
-                    },
-                  }}
-                />
-              }
-              label="All"
-            />
-            <FormControlLabel
-              value="active"
-              control={
-                <Radio
-                  sx={{
-                    "& .MuiSvgIcon-root": {
-                      color: "#000",
-                    },
-                  }}
-                />
-              }
-              label="Active"
-            />
-            <FormControlLabel
-              value="past"
-              control={
-                <Radio
-                  sx={{
-                    "& .MuiSvgIcon-root": {
-                      color: "#000",
-                    },
-                  }}
-                />
-              }
-              label="Past"
-            />
-          </RadioGroup>
-        </FormControl>
+                fontWeight: "bold",
+                "&.Mui-focused": {
+                  color: "#000",
+                },
+              }}
+            >
+              Status
+            </FormLabel>
+            <RadioGroup value={status} onChange={handleStatusChange} aria-label="status">
+              <FormControlLabel
+                value="all"
+                control={
+                  <Radio
+                    sx={{
+                      "& .MuiSvgIcon-root": {
+                        color: "#000",
+                      },
+                    }}
+                  />
+                }
+                label="All"
+              />
+              <FormControlLabel
+                value="active"
+                control={
+                  <Radio
+                    sx={{
+                      "& .MuiSvgIcon-root": {
+                        color: "#000",
+                      },
+                    }}
+                  />
+                }
+                label="Active"
+              />
+              <FormControlLabel
+                value="past"
+                control={
+                  <Radio
+                    sx={{
+                      "& .MuiSvgIcon-root": {
+                        color: "#000",
+                      },
+                    }}
+                  />
+                }
+                label="Past"
+              />
+            </RadioGroup>
+          </FormControl>
 
-        <FormControl sx={{ mt: 4 }}>
-          <FormLabel
-            component="legend"
-            sx={{
-              fontSize: "20px",
-              color: "#000",
-              fontWeight: "bold",
-              "&.Mui-focused": {
+          <FormControl>
+            <FormLabel
+              component="legend"
+              sx={{
+                fontSize: "20px",
                 color: "#000",
-              },
-            }}
-          >
-            Sort by
-          </FormLabel>
-          <RadioGroup value={sortBy} onChange={handleSortbyChange} aria-label="status">
-            <FormControlLabel
-              value="fundingDeadline"
-              control={
-                <Radio
-                  sx={{
-                    "& .MuiSvgIcon-root": {
-                      color: "#000",
-                    },
-                  }}
-                />
-              }
-              label="Funding deadline"
-            />
-            <FormControlLabel
-              value="sortingFundingLevelHighToLow"
-              control={
-                <Radio
-                  sx={{
-                    "& .MuiSvgIcon-root": {
-                      color: "#000",
-                    },
-                  }}
-                />
-              }
-              label="Sorting funding level high to low"
-            />
-            <FormControlLabel
-              value="hospitalName"
-              control={
-                <Radio
-                  sx={{
-                    "& .MuiSvgIcon-root": {
-                      color: "#000",
-                    },
-                  }}
-                />
-              }
-              label="Hospital name"
-            />
-          </RadioGroup>
-        </FormControl>
+                fontWeight: "bold",
+                "&.Mui-focused": {
+                  color: "#000",
+                },
+              }}
+            >
+              Sort by
+            </FormLabel>
+            <RadioGroup value={filters.sortBy} onChange={handleSortbyChange} aria-label="status">
+              <FormControlLabel
+                value="fundingDeadline"
+                control={
+                  <Radio
+                    sx={{
+                      "& .MuiSvgIcon-root": {
+                        color: "#000",
+                      },
+                    }}
+                  />
+                }
+                label="Funding deadline"
+              />
+              <FormControlLabel
+                value="sortingFundingLevelHighToLow"
+                control={
+                  <Radio
+                    sx={{
+                      "& .MuiSvgIcon-root": {
+                        color: "#000",
+                      },
+                    }}
+                  />
+                }
+                label="Funding level"
+              />
+              <FormControlLabel
+                value="hospitalName"
+                control={
+                  <Radio
+                    sx={{
+                      "& .MuiSvgIcon-root": {
+                        color: "#000",
+                      },
+                    }}
+                  />
+                }
+                label="Hospital name"
+              />
+            </RadioGroup>
+          </FormControl>
+        </Box>
       </DialogContent>
       <Divider sx={{ borderBottomWidth: 2.2 }} />
       <DialogActions

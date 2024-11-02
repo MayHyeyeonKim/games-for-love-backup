@@ -15,4 +15,3 @@ export type HospitalInfo = {
   latitude: number;
   hospitalPictures: string[];
 };
-
