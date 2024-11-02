@@ -44,10 +44,13 @@ const CustomDialog = styled(Dialog)(() => ({
 }));
 
 const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
-  const { hospitals, setOriginals } = useContext(HospitalsContext);
-  const { setOriginalFilters, filters } = useContext(FilterContext);
+  const { hospitals, setOriginals, setHospitals } =
+    useContext(HospitalsContext);
+  const { setFilters, filters } = useContext(FilterContext);
   const [locationValue, setLocationValue] = useState<string>("");
-  const [locationChips, setLocationChips] = useState<string[]>(filters.location);
+  const [locationChips, setLocationChips] = useState<string[]>(
+    filters.location
+  );
 
   const [status, setStatus] = useState("all");
 
@@ -59,7 +62,9 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
   };
 
   const handleDeleteChip = (chipToDelete: string) => {
-    setLocationChips((prevChips) => prevChips.filter((chip) => chip !== chipToDelete));
+    setLocationChips((prevChips) =>
+      prevChips.filter((chip) => chip !== chipToDelete)
+    );
   };
 
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -67,19 +72,30 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
   };
 
   const handleSortbyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setOriginalFilters({ ...filters, sortBy: e.target.value });
+    setFilters({ ...filters, sortBy: e.target.value });
   };
 
   const handleApplyFilters = async () => {
     if (filters.location.length === 0 && filters.status.length === 0) {
-      hospitalService.combineHospitalInfoAndRequestAndFunded().then((res) => setOriginals(res));
-      const sortedHospitals = hospitalService.sortingHospitals(hospitals, filters.sortBy, false);
-      setOriginals(sortedHospitals);
+      hospitalService
+        .combineHospitalInfoAndRequestAndFunded()
+        .then((res) => setOriginals(res));
+      const sortedHospitals = hospitalService.sortingHospitals(
+        hospitals,
+        filters.sortBy,
+        false
+      );
+      setHospitals(sortedHospitals);
     } else {
       console.log(filters);
-      const filteredHospitals = await hospitalService.combineHospitalInfoAndRequestAndFunded(filters);
-      const sortedHospitals = hospitalService.sortingHospitals(filteredHospitals, filters.sortBy, false);
-      setOriginals(sortedHospitals);
+      const filteredHospitals =
+        await hospitalService.combineHospitalInfoAndRequestAndFunded(filters);
+      const sortedHospitals = hospitalService.sortingHospitals(
+        filteredHospitals,
+        filters.sortBy,
+        false
+      );
+      setHospitals(sortedHospitals);
     }
 
     handleClose();
@@ -88,13 +104,14 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
   const handleClearAll = async () => {
     setLocationChips([]), setLocationValue("");
     setStatus("all");
-    setOriginalFilters({
+    setFilters({
       location: [],
       status: [],
       sortBy: "fundingDeadline",
       sortDirection: false,
     });
-    const hospitals = await hospitalService.combineHospitalInfoAndRequestAndFunded();
+    const hospitals =
+      await hospitalService.combineHospitalInfoAndRequestAndFunded();
     setOriginals(hospitals);
   };
 
@@ -105,13 +122,17 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
       sortBy: "fundingDeadline",
       sortDirection: false,
     };
-    const newFilter = status === "all" ? { ...filter, status: ["active", "past"] } : filter;
-    setOriginalFilters(newFilter);
+    const newFilter =
+      status === "all" ? { ...filter, status: ["active", "past"] } : filter;
+    setFilters(newFilter);
   }, [locationChips, status]);
 
   useEffect(() => {
     let initialStatus;
-    if (filters.status.length === 2 || (!filters.status.includes("active") && !filters.status.includes("past"))) {
+    if (
+      filters.status.length === 2 ||
+      (!filters.status.includes("active") && !filters.status.includes("past"))
+    ) {
       initialStatus = "all";
     } else {
       initialStatus = filters.status[0];
@@ -120,8 +141,15 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
   }, []);
 
   return (
-    <CustomDialog onClose={handleClose} open={open} aria-labelledby="filter-hospital-dialog">
-      <DialogTitle sx={{ m: 0, p: 2, pl: 3, pb: 0, fontSize: 24 }} id="dialog-title">
+    <CustomDialog
+      onClose={handleClose}
+      open={open}
+      aria-labelledby="filter-hospital-dialog"
+    >
+      <DialogTitle
+        sx={{ m: 0, p: 2, pl: 3, pb: 0, fontSize: 24 }}
+        id="dialog-title"
+      >
         Filters
       </DialogTitle>
       <IconButton
@@ -138,7 +166,11 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
       </IconButton>
       <DialogContent>
         <Box sx={{ mt: 2, mb: 0.8 }}>
-          <Typography sx={{ fontSize: "20px", color: "#000", fontWeight: "bold" }}>Location</Typography>
+          <Typography
+            sx={{ fontSize: "20px", color: "#000", fontWeight: "bold" }}
+          >
+            Location
+          </Typography>
           <TextField
             fullWidth
             variant="outlined"
@@ -209,7 +241,11 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
             >
               Status
             </FormLabel>
-            <RadioGroup value={status} onChange={handleStatusChange} aria-label="status">
+            <RadioGroup
+              value={status}
+              onChange={handleStatusChange}
+              aria-label="status"
+            >
               <FormControlLabel
                 value="all"
                 control={
@@ -266,7 +302,11 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
             >
               Sort by
             </FormLabel>
-            <RadioGroup value={filters.sortBy} onChange={handleSortbyChange} aria-label="status">
+            <RadioGroup
+              value={filters.sortBy}
+              onChange={handleSortbyChange}
+              aria-label="status"
+            >
               <FormControlLabel
                 value="fundingDeadline"
                 control={
@@ -281,7 +321,7 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
                 label="Funding deadline"
               />
               <FormControlLabel
-                value="sortingFundingLevelHighToLow"
+                value="fundingLevel"
                 control={
                   <Radio
                     sx={{

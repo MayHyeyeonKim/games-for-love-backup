@@ -17,7 +17,6 @@ import { FilterType } from "./types/fillterType";
 import { hospitalService } from "./services/hospital/hospitalService";
 import { Hospital } from "./models/hospital";
 import { HospitalsContext } from "./context/HospitalContext";
-import { FilterContext } from "./context/FilterContext";
 
 type HospitalListProps = {
   hospitals: Hospital[] | undefined;
@@ -25,19 +24,22 @@ type HospitalListProps = {
 const HospitalList: React.FC<HospitalListProps> = ({ hospitals }) => {
   // const { hospitals } = useContext(HospitalsContext);
   // console.log("rendering?????", hospitals);
-  return hospitals?.map((hospital, idx: number) => <HospitalCardDetails key={`h-${idx})`} hospital={hospital} />);
+  return hospitals?.map((hospital, idx: number) => (
+    <HospitalCardDetails key={`h-${idx})`} hospital={hospital} />
+  ));
 };
 
 function App() {
   const { hospitals, setOriginals } = useContext(HospitalsContext);
-  const { filters } = useContext(FilterContext);
   const [windowHeight, setWindowHeight] = useState<number>(400);
 
-  const getCombinedHospital = async (filter?: FilterType) => {
-    const _hospitals: Hospital[] | undefined = await hospitalService.combineHospitalInfoAndRequestAndFunded(filter);
-    const sortedHospitals = hospitalService.sortingHospitals(_hospitals, filters.sortBy, filters.sortDirection);
-    console.log("WTF", sortedHospitals, filters.sortDirection);
-    setOriginals(sortedHospitals);
+  const getCombinedHospital = async () => {
+    hospitalService
+      .combineHospitalInfoAndRequestAndFunded()
+      .then((res) => setOriginals(res));
+    // const sortedHospitals = hospitalService.sortingHospitals(hospitals, filters.sortBy, filters.sortDirection);
+    // console.log("WTF", sortedHospitals, filters.sortDirection);
+    // setHospitals(sortedHospitals);
   };
 
   useEffect(() => {
@@ -49,7 +51,7 @@ function App() {
       setWindowHeight(window.innerHeight);
     }
     window.addEventListener("resize", handleResize);
-  }, [filters.sortDirection]);
+  }, []);
 
   return (
     <Grid container>

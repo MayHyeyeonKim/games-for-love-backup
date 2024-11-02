@@ -5,7 +5,13 @@
  *
  */
 import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { Box, TextField, IconButton, Button, InputAdornment } from "@mui/material";
+import {
+  Box,
+  TextField,
+  IconButton,
+  Button,
+  InputAdornment,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -20,8 +26,10 @@ import { FilterContext } from "../context/FilterContext";
 export const SearchAndSort = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [isDescending, setIsDescending] = useState<boolean>(false);
-  const { originals, setHospitals, hospitals, setOriginals } = useContext(HospitalsContext);
-  const { filters, setOriginalFilters } = useContext(FilterContext);
+  const { originals, setHospitals, hospitals, setOriginals } =
+    useContext(HospitalsContext);
+  const { filters, setFilters } = useContext(FilterContext);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const handleOpenFilters = () => {
     setShowFilters(true);
@@ -34,6 +42,11 @@ export const SearchAndSort = () => {
   const changeSearch = (e: ChangeEvent<HTMLInputElement>) => {
     //searching through originals
     setHospitals(hospitalService.filterHospitals(originals, e.target.value));
+    if (e.target.value !== "") {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
   };
 
   const handelOrderButton = () => {
@@ -42,10 +55,14 @@ export const SearchAndSort = () => {
 
   useEffect(() => {
     console.log(isDescending);
-    setOriginalFilters({ ...filters, sortDirection: isDescending });
-    const sortedHospitals = hospitalService.sortingHospitals(hospitals, filters.sortBy, isDescending);
+    setFilters({ ...filters, sortDirection: isDescending });
+    const sortedHospitals = hospitalService.sortingHospitals(
+      hospitals,
+      filters.sortBy,
+      isDescending
+    );
     console.log("sortedHospitals", sortedHospitals);
-    setOriginals(sortedHospitals);
+    setHospitals(sortedHospitals);
   }, [isDescending]);
 
   return (
@@ -94,12 +111,14 @@ export const SearchAndSort = () => {
         />
         <IconButton
           onClick={handleOpenFilters}
+          disabled={isDisabled}
           sx={{
             padding: "10px",
             backgroundColor: "#ffffff",
             borderRadius: "12px",
             border: "1px solid #d9d9d9",
             height: "36px",
+            width: "64px",
           }}
         >
           <FilterListIcon />
@@ -108,13 +127,13 @@ export const SearchAndSort = () => {
         <Button
           variant="outlined"
           onClick={handelOrderButton}
+          disabled={isDisabled}
           sx={{
             color: "#000",
             textTransform: "capitalize",
             padding: "0px",
             margin: "0px",
-            width: "40px",
-            height: "40px",
+            height: "36px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -129,7 +148,9 @@ export const SearchAndSort = () => {
           {isDescending ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
         </Button>
       </Box>
-      {showFilters && <FilterDialog open={showFilters} handleClose={handleCloseFilters} />}
+      {showFilters && (
+        <FilterDialog open={showFilters} handleClose={handleCloseFilters} />
+      )}
     </Box>
   );
 };
