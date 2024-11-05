@@ -7,25 +7,22 @@
  *
  */
 import { ReactNode, createContext, useEffect, useState } from "react";
-import { FilterType } from "../types/fillterType";
+import { FilterType, sortDirection } from "../types/fillterType";
 
 interface FilterContextType {
   filters: FilterType;
   setFilters: (filters: FilterType) => void;
-  // originalFilters: FilterType;
-  // setOriginalFilters: (filters: FilterType) => void;
+  originalFilters: FilterType;
+  setOriginalFilters: (filters: FilterType) => void;
+  clearFilters: () => void;
 }
 
 export const FilterContext = createContext<FilterContextType>({
-  filters: {
-    location: [],
-    status: [],
-    sortBy: "fundingDeadline",
-    sortDirection: false,
-  },
+  filters: { location: [], status: [], sortBy: "fundingDeadline", sortDirection: sortDirection.ASCENDING },
   setFilters: () => {},
-  // originalFilters: { location: [], status: [], sortBy: "fundingDeadline", sortDirection: false },
-  // setOriginalFilters: () => {},
+  originalFilters: { location: [], status: [], sortBy: "fundingDeadline", sortDirection: sortDirection.ASCENDING },
+  setOriginalFilters: () => {},
+  clearFilters: () => {},
 });
 
 export const FilterContextProvider = (props: { children: ReactNode }) => {
@@ -33,27 +30,37 @@ export const FilterContextProvider = (props: { children: ReactNode }) => {
     location: [],
     status: [],
     sortBy: "fundingDeadline",
-    sortDirection: false,
+    sortDirection: sortDirection.UNDEFINED,
   });
 
-  // const [originalFilters, setOriginalFilters] = useState<FilterType>({
-  //   location: [],
-  //   status: [],
-  //   sortBy: "fundingDeadline",
-  //   sortDirection: false,
-  // });
+  const [originalFilters, setOriginalFilters] = useState<FilterType>({
+    location: [],
+    status: [],
+    sortBy: "fundingDeadline",
+    sortDirection: sortDirection.UNDEFINED,
+  });
 
   useEffect(() => {
-    setFilters(filters);
-  }, [filters]);
+    setFilters(originalFilters);
+  }, [originalFilters]);
+
+  const clearFilters = () => {
+    setFilters({
+      location: [],
+      status: [],
+      sortBy: "fundingDeadline",
+      sortDirection: sortDirection.UNDEFINED,
+    });
+  };
 
   return (
     <FilterContext.Provider
       value={{
         filters,
         setFilters,
-        // originalFilters,
-        // setOriginalFilters,
+        originalFilters,
+        setOriginalFilters,
+        clearFilters,
       }}
     >
       {props.children}

@@ -17,34 +17,31 @@ class HospitalInfoService {
     const TABLE = import.meta.env.VITE_AIRTABLE_TABLE_HOSPITAL_REFERENCE;
     const MAX_RECORDS = 100;
 
-    const hospitals = airtableService
-      .getTableRecords(TABLE, MAX_RECORDS)
-      .then((records) =>
-        records.map((r) => {
-          const hospitalData = {
-            recordId: r.id,
-            name: `${r.fields["Hospital Name"]}`,
-            status: Math.random() * 10 > 5 ? "active" : "past", //r.fields["Status"],
-            type: r.fields["Type of Organization"],
-            description: r.fields["Organization Notes / Description"],
-            year: r.fields["Kids Served / Year"],
-            country: r.fields["Country"],
-            state: r.fields["State"],
-            zip: r.fields["ZIP"],
-            city: r.fields["City"],
-            address: r.fields["Address"],
-            longitude: r.fields["Long"],
-            latitude: r.fields["Lat"],
-            hospitalPictures: [
-              extractUrls(r.fields["Hospital Picture 1"])[0],
-              extractUrls(r.fields["Hospital Picture 2"])[0],
-              extractUrls(r.fields["Hospital Picture 3"])[0],
-            ].filter((u) => u !== undefined),
-            id: r.fields["ID"],
-          } as HospitalInfo;
-          return hospitalData;
-        })
-      );
+    const hospitals = airtableService.getTableRecords(TABLE, MAX_RECORDS).then((records) =>
+      records.map((r) => {
+        const hospitalData = {
+          recordId: r.id,
+          name: `${r.fields["Hospital Name"]}`,
+          type: r.fields["Type of Organization"],
+          description: r.fields["Organization Notes / Description"],
+          year: r.fields["Kids Served / Year"],
+          country: r.fields["Country"],
+          state: r.fields["State"],
+          zip: r.fields["ZIP"],
+          city: r.fields["City"],
+          address: r.fields["Address"],
+          longitude: r.fields["Long"],
+          latitude: r.fields["Lat"],
+          hospitalPictures: [
+            extractUrls(r.fields["Hospital Picture 1"])[0],
+            extractUrls(r.fields["Hospital Picture 2"])[0],
+            extractUrls(r.fields["Hospital Picture 3"])[0],
+          ].filter((u) => u !== undefined),
+          id: r.fields["ID"],
+        } as HospitalInfo;
+        return hospitalData;
+      })
+    );
 
     return hospitals;
   }

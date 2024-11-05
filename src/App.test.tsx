@@ -21,7 +21,7 @@ describe("App component", () => {
         state: "wa",
         description: "This is a test hospital",
         hospitalPictures: ["/path/to/image.jpg"],
-        status: "active",
+        : "active",
       },
     ]);
 
@@ -65,7 +65,7 @@ describe("App component", () => {
         state: "wa",
         description: "This is a test hospital",
         hospitalPictures: ["/path/to/image.jpg"],
-        status: "active",
+        : "active",
       },
       {
         id: 2,
@@ -74,7 +74,7 @@ describe("App component", () => {
         state: "wa",
         description: "This is a test hospital2",
         hospitalPictures: ["/path/to/image2.jpg"],
-        status: "past",
+        : "past",
       },
     ]);
     render(
@@ -98,7 +98,7 @@ describe("App component", () => {
         state: "wa",
         description: "This is a test hospital",
         hospitalPictures: ["/path/to/image.jpg"],
-        status: "active",
+        : "active",
       },
     ]);
     render(<App />);

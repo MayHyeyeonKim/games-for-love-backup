@@ -13,33 +13,23 @@ import { SearchAndSort } from "./components/SearchAndSort";
 
 import "./App.css";
 
-import { FilterType } from "./types/fillterType";
+import { sortDirection } from "./types/fillterType";
 import { hospitalService } from "./services/hospital/hospitalService";
-import { Hospital } from "./models/hospital";
 import { HospitalsContext } from "./context/HospitalContext";
+import { FilterContext } from "./context/FilterContext";
 
-type HospitalListProps = {
-  hospitals: Hospital[] | undefined;
-};
-const HospitalList: React.FC<HospitalListProps> = ({ hospitals }) => {
-  // const { hospitals } = useContext(HospitalsContext);
-  // console.log("rendering?????", hospitals);
-  return hospitals?.map((hospital, idx: number) => (
-    <HospitalCardDetails key={`h-${idx})`} hospital={hospital} />
-  ));
+const HospitalList = () => {
+  const { hospitals } = useContext(HospitalsContext);
+  return hospitals?.map((hospital, idx: number) => <HospitalCardDetails key={`h-${idx})`} hospital={hospital} />);
 };
 
 function App() {
-  const { hospitals, setOriginals } = useContext(HospitalsContext);
+  const { setOriginals, setHospitals } = useContext(HospitalsContext);
+  const { filters } = useContext(FilterContext);
   const [windowHeight, setWindowHeight] = useState<number>(400);
 
   const getCombinedHospital = async () => {
-    hospitalService
-      .combineHospitalInfoAndRequestAndFunded()
-      .then((res) => setOriginals(res));
-    // const sortedHospitals = hospitalService.sortingHospitals(hospitals, filters.sortBy, filters.sortDirection);
-    // console.log("WTF", sortedHospitals, filters.sortDirection);
-    // setHospitals(sortedHospitals);
+    hospitalService.combineHospitalInfoAndRequestAndFunded().then((res) => setOriginals(res));
   };
 
   useEffect(() => {
@@ -53,6 +43,18 @@ function App() {
     window.addEventListener("resize", handleResize);
   }, []);
 
+  const filterHospitals = async () => {
+    const filteredHospitals = await hospitalService.combineHospitalInfoAndRequestAndFunded(filters);
+    const sortedHospitals = hospitalService.sortingHospitals(filteredHospitals, filters.sortBy, filters.sortDirection);
+    setHospitals(sortedHospitals);
+  };
+
+  useEffect(() => {
+    if (filters.sortDirection !== sortDirection.UNDEFINED) {
+      filterHospitals();
+    }
+  }, [filters.sortDirection]);
+
   return (
     <Grid container>
       <Grid item xs={12} lg={7}>
@@ -61,7 +63,7 @@ function App() {
             <SearchAndSort />
           </Box>
           <Box padding={1} data-testid="hospital-list">
-            <HospitalList hospitals={hospitals} />
+            <HospitalList />
           </Box>
         </Box>
       </Grid>
