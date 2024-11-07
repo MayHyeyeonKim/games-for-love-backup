@@ -20,7 +20,9 @@ import { FilterContext } from "./context/FilterContext";
 
 const HospitalList = () => {
   const { hospitals } = useContext(HospitalsContext);
-  return hospitals?.map((hospital, idx: number) => <HospitalCardDetails key={`h-${idx})`} hospital={hospital} />);
+  return hospitals?.map((hospital, idx: number) => (
+    <HospitalCardDetails key={`h-${idx})`} hospital={hospital} />
+  ));
 };
 
 function App() {
@@ -29,7 +31,9 @@ function App() {
   const [windowHeight, setWindowHeight] = useState<number>(400);
 
   const getCombinedHospital = async () => {
-    hospitalService.combineHospitalInfoAndRequestAndFunded().then((res) => setOriginals(res));
+    hospitalService
+      .combineHospitalInfoAndRequestAndFunded()
+      .then((res) => setOriginals(res));
   };
 
   useEffect(() => {
@@ -44,8 +48,13 @@ function App() {
   }, []);
 
   const filterHospitals = async () => {
-    const filteredHospitals = await hospitalService.combineHospitalInfoAndRequestAndFunded(filters);
-    const sortedHospitals = hospitalService.sortingHospitals(filteredHospitals, filters.sortBy, filters.sortDirection);
+    const filteredHospitals =
+      await hospitalService.combineHospitalInfoAndRequestAndFunded(filters);
+    const sortedHospitals = hospitalService.sortingHospitals(
+      filteredHospitals,
+      filters.sortBy,
+      filters.sortDirection
+    );
     setHospitals(sortedHospitals);
   };
 
