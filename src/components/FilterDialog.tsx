@@ -29,6 +29,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { InputAdornment } from "@mui/material";
 import { FilterContext } from "../context/FilterContext";
 import { DialogProps } from "../types/dialogProps";
+import ActionButton from "../styles/ActionButton";
 import { hospitalService } from "../services/hospital/hospitalService";
 import { HospitalsContext } from "../context/HospitalContext";
 import { FilterType, sortDirection } from "../types/fillterType";
@@ -366,35 +367,14 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
         >
           Clear all
         </Button>
-
-        <Button
-          variant="contained"
-          fullWidth
+        <ActionButton
           onClick={handleApplyFilters}
           sx={{
             width: "50%",
-            margin: "0 auto",
-            backgroundColor: "#000",
-            borderRadius: "15px",
-            textTransform: "capitalize",
-            "&:hover": {
-              backgroundColor: "transparent",
-              color: "#000",
-            },
-            "&:focus": {
-              outline: "none",
-            },
-            "&:active": {
-              outline: "none",
-              border: "none",
-            },
-            "&.MuiButton-root": {
-              border: "none",
-            },
           }}
         >
           Apply
-        </Button>
+        </ActionButton>
       </DialogActions>
     </CustomDialog>
   );

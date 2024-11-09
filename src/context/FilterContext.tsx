@@ -18,9 +18,20 @@ interface FilterContextType {
 }
 
 export const FilterContext = createContext<FilterContextType>({
-  filters: { location: [], status: [], sortBy: "fundingDeadline", sortDirection: sortDirection.ASCENDING },
+  filters: {
+    location: [],
+    status: [],
+    sortBy: "fundingDeadline",
+    sortDirection: sortDirection.ASCENDING,
+  },
   setFilters: () => {},
-  originalFilters: { location: [], status: [], sortBy: "fundingDeadline", sortDirection: sortDirection.ASCENDING },
+  originalFilters: {
+    location: [],
+    status: [],
+    sortBy: "fundingDeadline",
+    sortDirection: sortDirection.ASCENDING,
+  },
+
   setOriginalFilters: () => {},
   clearFilters: () => {},
 });
@@ -40,10 +51,6 @@ export const FilterContextProvider = (props: { children: ReactNode }) => {
     sortDirection: sortDirection.UNDEFINED,
   });
 
-  useEffect(() => {
-    setFilters(originalFilters);
-  }, [originalFilters]);
-
   const clearFilters = () => {
     setFilters({
       location: [],
@@ -52,6 +59,10 @@ export const FilterContextProvider = (props: { children: ReactNode }) => {
       sortDirection: sortDirection.UNDEFINED,
     });
   };
+
+  useEffect(() => {
+    setFilters(originalFilters);
+  }, [originalFilters]);
 
   return (
     <FilterContext.Provider

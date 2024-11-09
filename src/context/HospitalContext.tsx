@@ -30,7 +30,6 @@ export const HospitalsContextProvider = (props: { children: ReactNode }) => {
   const [hospitals, setHospitals] = useState<Hospital[] | undefined>(undefined);
 
   useEffect(() => {
-    console.log("hospital있어?", hospitals);
     setHospitals(originals);
   }, [originals]);
 

@@ -5,7 +5,13 @@
  *
  */
 import { ChangeEvent, useContext, useState } from "react";
-import { Box, TextField, IconButton, Button, InputAdornment } from "@mui/material";
+import {
+  Box,
+  TextField,
+  IconButton,
+  Button,
+  InputAdornment,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -44,9 +50,15 @@ export const SearchAndSort = () => {
 
   const handelOrderButton = () => {
     if (filters.sortDirection === sortDirection.DESCENDING) {
-      setOriginalFilters({ ...filters, sortDirection: sortDirection.ASCENDING });
+      setOriginalFilters({
+        ...filters,
+        sortDirection: sortDirection.ASCENDING,
+      });
     } else {
-      setOriginalFilters({ ...filters, sortDirection: sortDirection.DESCENDING });
+      setOriginalFilters({
+        ...filters,
+        sortDirection: sortDirection.DESCENDING,
+      });
     }
   };
 
@@ -112,12 +124,15 @@ export const SearchAndSort = () => {
         <Button
           variant="outlined"
           onClick={handelOrderButton}
-          disabled={isDisabled || filters.sortDirection === sortDirection.UNDEFINED}
+          disabled={
+            isDisabled || filters.sortDirection === sortDirection.UNDEFINED
+          }
           sx={{
             color: "#000",
             textTransform: "capitalize",
             padding: "0px",
             margin: "0px",
+            width: "40px",
             height: "36px",
             display: "flex",
             alignItems: "center",
@@ -130,10 +145,16 @@ export const SearchAndSort = () => {
             },
           }}
         >
-          {filters.sortDirection === sortDirection.DESCENDING ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
+          {filters.sortDirection === sortDirection.DESCENDING ? (
+            <ArrowDownwardIcon />
+          ) : (
+            <ArrowUpwardIcon />
+          )}
         </Button>
       </Box>
-      {showFilters && <FilterDialog open={showFilters} handleClose={handleCloseFilters} />}
+      {showFilters && (
+        <FilterDialog open={showFilters} handleClose={handleCloseFilters} />
+      )}
     </Box>
   );
 };

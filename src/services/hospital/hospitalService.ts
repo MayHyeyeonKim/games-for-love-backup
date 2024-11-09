@@ -18,14 +18,14 @@ class HospitalService {
       hospitalInfoService.getHospitalInfo(),
       hospitalRequestService.getHospitalRequest(),
       hospitalFundedService.getHospitalFunded(),
-    ]).then((resp) => {
-      return resp[0]
+    ]).then((resps) => {
+      return resps[0]
         .map((hi) => {
           const currentDate = new Date();
-          const matchedRequest = resp[1].find(
+          const matchedRequest = resps[1].find(
             (hr) => hr.name[0] === hi.recordId
           );
-          const matchedFund = resp[2].find(
+          const matchedFund = resps[2].find(
             (hf) =>
               hf.hospitalRequestId ===
               (matchedRequest ? matchedRequest.recordId : undefined)
@@ -133,7 +133,6 @@ class HospitalService {
         }
       });
     }
-
     return sortedHospitals;
   };
 }
