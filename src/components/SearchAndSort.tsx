@@ -23,11 +23,12 @@ import { HospitalsContext } from "../context/HospitalContext";
 import { hospitalService } from "../services/hospital/hospitalService";
 import { FilterContext } from "../context/FilterContext";
 import { sortDirection } from "../types/fillterType";
+import { BORDER_COLOR } from "../styles/theme";
 
 export const SearchAndSort = () => {
   const [showFilters, setShowFilters] = useState(false);
-  const { originals, setHospitals } = useContext(HospitalsContext);
-  const { filters, setOriginalFilters } = useContext(FilterContext);
+  const { originals, hospitals, setHospitals } = useContext(HospitalsContext);
+  const { filters, setFilters } = useContext(FilterContext);
   const [isDisabled, setIsDisabled] = useState(false);
 
   const handleOpenFilters = () => {
@@ -49,17 +50,17 @@ export const SearchAndSort = () => {
   };
 
   const handelOrderButton = () => {
-    if (filters.sortDirection === sortDirection.DESCENDING) {
-      setOriginalFilters({
-        ...filters,
-        sortDirection: sortDirection.ASCENDING,
-      });
-    } else {
-      setOriginalFilters({
-        ...filters,
-        sortDirection: sortDirection.DESCENDING,
-      });
-    }
+    const updated = {
+      ...filters,
+      sortDirection:
+        filters.sortDirection === sortDirection.DESCENDING
+          ? sortDirection.ASCENDING
+          : sortDirection.DESCENDING,
+    };
+    setHospitals(
+      hospitals.sort(hospitalService.getSortComparator(updated)).slice()
+    );
+    setFilters(updated);
   };
 
   return (
@@ -73,7 +74,7 @@ export const SearchAndSort = () => {
         }}
       >
         <TextField
-          placeholder="Search"
+          placeholder="Search hospital name"
           onChange={changeSearch}
           InputProps={{
             endAdornment: (
@@ -113,7 +114,7 @@ export const SearchAndSort = () => {
             padding: "10px",
             backgroundColor: "#ffffff",
             borderRadius: "12px",
-            border: "1px solid #d9d9d9",
+            border: "1px solid " + BORDER_COLOR,
             height: "36px",
             width: "64px",
           }}
@@ -138,10 +139,10 @@ export const SearchAndSort = () => {
             alignItems: "center",
             justifyContent: "center",
             borderRadius: "12px",
-            border: "1px solid #d9d9d9",
+            border: "1px solid " + BORDER_COLOR,
             backgroundColor: "white",
             "&:hover": {
-              border: "1px solid #d9d9d9",
+              border: "1px solid " + BORDER_COLOR,
             },
           }}
         >

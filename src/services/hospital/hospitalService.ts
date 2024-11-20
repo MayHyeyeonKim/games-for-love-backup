@@ -4,24 +4,54 @@
  *  @copyright 2024 Digital Aid Seattle
  *
  */
+import { differenceInDays } from "date-fns";
 import { Hospital } from "../../models/hospital";
+import { HospitalFunded } from "../../models/hospitalFunded";
+import { HospitalInfo } from "../../models/hospitalInfo";
+import { HospitalRequest } from "../../models/hospitalRequest";
 import { FilterType, sortDirection } from "../../types/fillterType";
 import { hospitalFundedService } from "../hospitalFunded/hospitalFundedService";
 import { hospitalInfoService } from "../hospitalInfo/hospitalInfoService";
 import { hospitalRequestService } from "../hospitalRequest/hospitalRequestService";
-
 class HospitalService {
-  async combineHospitalInfoAndRequestAndFunded(
-    filter?: FilterType
-  ): Promise<Hospital[] | undefined> {
+  transform(
+    hi: HospitalInfo,
+    matchedRequest: HospitalRequest,
+    matchedFund: HospitalFunded,
+    currentDate: Date
+  ): Hospital {
+    const hospital = {
+      id: hi.id,
+      name: hi.name,
+      type: hi.type,
+      description: hi.description,
+      year: hi.year,
+      country: hi.country ?? "",
+      state: hi.state ?? "",
+      zip: hi.zip,
+      city: hi.city ?? "",
+      address: hi.address,
+      longitude: hi.longitude,
+      latitude: hi.latitude,
+      hospitalPictures: hi.hospitalPictures,
+      matchedRequest: matchedRequest,
+      matchedFunded: matchedFund,
+    } as Hospital;
+    hospital.status = this.calcStatus(hospital, currentDate);
+    hospital.fundingLevel = this.calcFundingLevel(hospital);
+    hospital.searchTerm = `${hospital.state?.toLowerCase()}.${hospital.city?.toLowerCase()}.${hospital.zip?.toLowerCase()}.${hospital.name?.toLowerCase()}`;
+    return hospital;
+  }
+
+  async findAll(filter?: FilterType): Promise<Hospital[]> {
+    const currentDate = new Date();
     return Promise.all([
-      hospitalInfoService.getHospitalInfo(),
-      hospitalRequestService.getHospitalRequest(),
-      hospitalFundedService.getHospitalFunded(),
+      hospitalInfoService.findAll(),
+      hospitalRequestService.findAll(),
+      hospitalFundedService.findAll(),
     ]).then((resps) => {
       return resps[0]
         .map((hi) => {
-          const currentDate = new Date();
           const matchedRequest = resps[1].find(
             (hr) => hr.name[0] === hi.recordId
           );
@@ -30,49 +60,50 @@ class HospitalService {
               hf.hospitalRequestId ===
               (matchedRequest ? matchedRequest.recordId : undefined)
           );
-          return {
-            id: hi.id,
-            hospitalInfoRecordId: hi.recordId,
-            requestRecordId: matchedRequest
-              ? matchedRequest.recordId
-              : undefined,
-            name: hi.name,
-            type: hi.type,
-            description: hi.description,
-            year: hi.year,
-            country: hi.country ?? "",
-            state: hi.state ?? "",
-            zip: hi.zip,
-            city: hi.city ?? "",
-            address: hi.address,
-            longitude: hi.longitude,
-            latitude: hi.latitude,
-            hospitalPictures: hi.hospitalPictures,
-            fundingDeadline: matchedRequest
-              ? matchedRequest.fundingDeadline
-              : "",
-            requested: matchedRequest ? matchedRequest.requested : undefined,
-            fundingCompleted: matchedFund
-              ? matchedFund.fundingCompleted
-              : undefined,
-            status:
-              currentDate >
-              new Date(matchedRequest ? matchedRequest.fundingDeadline : "")
-                ? "past"
-                : "active",
-          };
+          return this.transform(hi, matchedRequest!, matchedFund!, currentDate);
         })
-        .filter((hospital) =>
-          filter
-            ? filter.location.length === 0
-              ? filter.status.includes(hospital.status.toLowerCase())
-              : (filter.location.includes(hospital.state?.toLowerCase()) ||
-                  filter.location.includes(hospital.city.toLowerCase()) ||
-                  filter.location.includes(hospital.zip.toLowerCase())) &&
-                filter.status.includes(hospital.status.toLowerCase())
-            : true
-        ) as Hospital[];
+        .filter(this.filterPredicate(filter!))
+        .sort(this.getSortComparator(filter!)) as Hospital[];
     });
+  }
+
+  filterPredicate(filter: FilterType) {
+    return (hospital: Hospital) => {
+      if (!filter) {
+        return true;
+      }
+      if (filter.location.length === 0) {
+        return filter.status.includes(hospital.status.toLowerCase());
+      }
+      const lowerLocations = filter.location.map((l) => l.toLowerCase());
+      return (
+        // this would allow partial (e.g. sea will find for Seattle Hospitals)
+        // lowerLocations.find(l => hospital.searchTerm.includes(l)) &&
+        (lowerLocations.includes(hospital.state?.toLowerCase()) ||
+          lowerLocations.includes(hospital.city.toLowerCase()) ||
+          lowerLocations.includes(hospital.zip.toLowerCase())) &&
+        filter.status.includes(hospital.status.toLowerCase())
+      );
+    };
+  }
+
+  calcStatus(hospital: Hospital, currentDate: Date): string {
+    if (hospital.matchedRequest && hospital.matchedRequest.fundingDeadline) {
+      return currentDate > hospital.matchedRequest.fundingDeadline
+        ? "past"
+        : "active";
+    }
+    return "active";
+  }
+
+  calcFundingLevel(hospital: Hospital): number {
+    if (hospital.matchedRequest && hospital.matchedFunded) {
+      hospital.matchedRequest.requested
+        ? (hospital.matchedFunded.fundingCompleted || 0) /
+        hospital.matchedRequest.requested
+        : 0;
+    }
+    return 0;
   }
 
   isHospitalOpen = (hospital: Hospital | undefined) => {
@@ -83,57 +114,79 @@ class HospitalService {
     }
   };
 
-  filterHospitals = (hospitals: Hospital[] | undefined, searchTerm: string) => {
-    return hospitals?.filter(
-      (h: Hospital) =>
-        h.name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1
+  isEqual = (test: Hospital, selectedHospital: Hospital | undefined): boolean => {
+    return selectedHospital !== undefined && test.id === selectedHospital.id
+  }
+
+  filterHospitals = (hospitals: Hospital[], searchTerm: string) => {
+    const terms: string[] = searchTerm
+      .toLowerCase()
+      .split(" ")
+      .filter((t) => t);
+    return hospitals.filter((h: Hospital) =>
+      terms.find((term) => h.searchTerm.includes(term))
     );
   };
 
-  sortingHospitals = (
-    hospitals: Hospital[] | undefined,
-    sortBy: string,
-    sortDir: string
-  ) => {
-    let sortedHospitals;
-    if (sortBy === "fundingDeadline") {
-      sortedHospitals = hospitals?.sort((a, b) => {
-        const dateA = new Date(a.fundingDeadline);
-        const dateB = new Date(b.fundingDeadline);
+  fundingDeadlineComparator = (a: Hospital, b: Hospital): number => {
+    const dateA = a.matchedRequest
+      ? a.matchedRequest.fundingDeadline
+      : undefined;
+    const dateB = b.matchedRequest
+      ? b.matchedRequest.fundingDeadline
+      : undefined;
+    if (!dateA) {
+      return -1;
+    }
+    if (!dateB) {
+      return 1;
+    }
+    return dateA.getTime() - dateB.getTime();
+  };
 
-        if (sortDir === sortDirection.DESCENDING) {
-          return dateB.getTime() - dateA.getTime();
-        } else {
-          return dateA.getTime() - dateB.getTime();
-        }
-      });
-    }
-    if (sortBy === "hospitalName") {
-      sortedHospitals = hospitals?.sort((a, b) => {
-        if (sortDir === sortDirection.DESCENDING) {
-          return b.name.localeCompare(a.name);
-        } else {
-          return a.name.localeCompare(b.name);
-        }
-      });
-    }
-    if (sortBy === "fundingLevel") {
-      sortedHospitals = hospitals?.sort((a, b) => {
-        const a_fundingLevel = a.requested
-          ? (a.fundingCompleted || 0) / a.requested
-          : 0;
-        const b_fundingLevel = b.requested
-          ? (b.fundingCompleted || 0) / b.requested
-          : 0;
+  hospitalNameComparator = (a: Hospital, b: Hospital): number => {
+    return a.name.localeCompare(b.name);
+  };
 
-        if (sortDir === sortDirection.DESCENDING) {
-          return b_fundingLevel - a_fundingLevel;
-        } else {
-          return a_fundingLevel - b_fundingLevel;
-        }
-      });
+  fundingLevelComparator = (a: Hospital, b: Hospital): number => {
+    return a.fundingLevel - b.fundingLevel;
+  };
+
+  lookupComparator = (sortBy: string) => {
+    switch (sortBy) {
+      case "fundingDeadline":
+        return this.fundingDeadlineComparator;
+      case "fundingLevel":
+        return this.fundingLevelComparator;
+      case "hospitalName":
+      default:
+        return this.hospitalNameComparator;
     }
-    return sortedHospitals;
+  };
+
+  getSortComparator = (filter: FilterType) => {
+    if (!filter) {
+      return () => 0;
+    }
+    return (a: Hospital, b: Hospital) =>
+      (filter.sortDirection === sortDirection.DESCENDING ? -1 : 1) *
+      this.lookupComparator(filter.sortBy)(a, b);
+  };
+
+  getDonationMessage = (hospital: Hospital) => {
+    if (
+      hospital.status === "active" &&
+      hospital.matchedRequest &&
+      hospital.matchedRequest.fundingDeadline
+    ) {
+      const currentDate = new Date();
+      const deadlineDate = new Date(hospital.matchedRequest.fundingDeadline);
+      const daysLeft = differenceInDays(deadlineDate, currentDate);
+      return daysLeft > 0
+        ? `${daysLeft} days left to donate!`
+        : "Donations closed";
+    }
+    return "Donations closed";
   };
 }
 

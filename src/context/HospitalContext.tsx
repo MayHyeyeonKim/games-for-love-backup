@@ -10,10 +10,10 @@ import { ReactNode, createContext, useEffect, useState } from "react";
 import { Hospital } from "../models/hospital";
 
 interface HospitalsContextType {
-  hospitals: Hospital[] | undefined;
-  setHospitals: (hospitals: Hospital[] | undefined) => void;
-  originals: Hospital[] | undefined;
-  setOriginals: (hospitals: Hospital[] | undefined) => void;
+  hospitals: Hospital[];
+  setHospitals: (hospitals: Hospital[]) => void;
+  originals: Hospital[];
+  setOriginals: (hospitals: Hospital[]) => void;
 }
 
 export const HospitalsContext = createContext<HospitalsContextType>({
@@ -26,11 +26,11 @@ export const HospitalsContext = createContext<HospitalsContextType>({
 export const HospitalsContextProvider = (props: { children: ReactNode }) => {
   // originals held in memory for faster searching.
   // originals updated when Airtable is queried.
-  const [originals, setOriginals] = useState<Hospital[] | undefined>(undefined);
-  const [hospitals, setHospitals] = useState<Hospital[] | undefined>(undefined);
+  const [originals, setOriginals] = useState<Hospital[]>([]);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
 
   useEffect(() => {
-    setHospitals(originals);
+    setHospitals(originals); //originals가 바뀌면 hospitals도 업데이트
   }, [originals]);
 
   return (
