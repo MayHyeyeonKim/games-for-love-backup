@@ -84,10 +84,6 @@ export const GFLMap = () => {
         center: [selectedHospital.longitude, selectedHospital.latitude],
         duration: 2000,
       });
-      // Review: Should changing selectedHospital close the popup
-      if (selectedHospital.id !== popupInfo?.hospital.id) {
-        setPopupInfo(null);
-      }
     } else {
       setPopupInfo(null);
     }

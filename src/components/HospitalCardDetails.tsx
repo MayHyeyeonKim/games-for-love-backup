@@ -34,7 +34,7 @@ import {
   BORDER_COLOR,
   getStatusColor,
   HIGHLIGHT_BACKGROUD_COLOR,
-  SELECTED_BACKGROUD_COLOR
+  SELECTED_BACKGROUD_COLOR,
 } from "../styles/theme";
 
 export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
@@ -63,13 +63,15 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
           ? SELECTED_BACKGROUD_COLOR
           : ""
       );
-      setPinColor(getStatusColor(
-        hospitalService.isEqual(hospital, selectedHospital)
-          ? "selected"
-          : hospital.status === "past"
+      setPinColor(
+        getStatusColor(
+          hospitalService.isEqual(hospital, selectedHospital)
+            ? "selected"
+            : hospital.status === "past"
             ? "past"
             : "active"
-      ));
+        )
+      );
       setIsOpen(hospitalService.isHospitalOpen(hospital));
     }
   }, [hospital, selectedHospital]);
@@ -115,7 +117,11 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
     fetchGeneralInfo();
   }, []);
 
-  const partnerName = generalInfo?.corpPartner1Name || "Unknown Partner";
+  const partnerLogos = [
+    generalInfo?.corpPartner1Logo,
+    generalInfo?.corpPartner2Logo,
+    generalInfo?.corpPartner3Logo,
+  ].filter(Boolean);
 
   return (
     <div data-testid="hospital-detail-card">
@@ -189,11 +195,7 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
                     },
                   }}
                 />{" "}
-                {
-                  [hospital?.city, hospital?.state]
-                    .filter(s => s)
-                    .join(', ')
-                }
+                {[hospital?.city, hospital?.state].filter((s) => s).join(", ")}
               </Typography>
 
               <Typography variant="h6" component="div">
@@ -205,10 +207,10 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
                   textOverflow: "ellipsis",
                   display: "-webkit-box",
                   WebkitLineClamp: "4",
-                  WebkitBoxOrient: "vertical"
-                }}>
+                  WebkitBoxOrient: "vertical",
+                }}
+              >
                 {hospital?.description}
-
               </EmphasizedText>
               <Stack direction={"row"} gap={1} marginTop={2}>
                 <ActionButton onClick={handleLearnMore}>
@@ -238,22 +240,36 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
                   width: "245px",
                 }}
               >
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  marginRight={1}
-                  sx={{ color: (theme) => theme.palette.common.black }}
-                >
-                  Matched by {partnerName}
-                </Typography>
+                {partnerLogos.length > 0 ? (
+                  partnerLogos.map((logo, index) => (
+                    <img
+                      key={index}
+                      src={logo}
+                      alt={`Corporate Partner ${index + 1}`}
+                      style={{ width: 50, height: 50, borderRadius: "50%" }}
+                    />
+                  ))
+                ) : (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ color: (theme) => theme.palette.common.black }}
+                  >
+                    Matched by Unknown Partner
+                  </Typography>
+                )}
               </Box>
               <Typography variant="body2" color="text.secondary">
                 ${Math.round(hospital.matchedFunded?.fundingCompleted || 0)}{" "}
-                {" "}
-                raised of $
-                {Math.round(hospital.matchedRequest?.requested || 0)} -{" "}
+                raised of ${Math.round(hospital.matchedRequest?.requested || 0)}{" "}
+                -{" "}
                 <EmphasizedText
-                  sx={{ color: getStatusColor(hospital?.status === "past" ? "past" : "active") }}>
+                  sx={{
+                    color: getStatusColor(
+                      hospital?.status === "past" ? "past" : "active"
+                    ),
+                  }}
+                >
                   {hospital?.status}
                 </EmphasizedText>
               </Typography>
