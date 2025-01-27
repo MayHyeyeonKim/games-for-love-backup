@@ -15,13 +15,15 @@ import { PopupInfo } from "../models/popupInfo";
 import { GFLPopup } from "./GFLPopup";
 
 import { Room } from "@mui/icons-material";
-import { Box } from "@mui/material";
+import { Box, Theme } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
 import { HospitalsContext } from "../context/HospitalContext";
 import { SelectedHospitalContext } from "../context/SelectedHospitalContext";
 import { Hospital } from "../models/hospital";
 import { siteService } from "../services/siteUtils";
-import { getStatusColor } from "../styles/theme";
+import SponsorPanel from "./SponsorPanel";
+import LearnMoreOverlay from "./LearnMoreOverlay";
+import { DonateOverlay } from "./DonateOverlay";
 
 const HospitalMarker = (props: {
   hospital: Hospital;
@@ -48,15 +50,13 @@ const HospitalMarker = (props: {
       >
         <Room
           sx={{
-            color: getStatusColor(
+            color: (theme: Theme) =>
               props.selected
-                ? "selected"
+                ? theme.palette.hospital.selected
                 : hospital.status === "past"
-                ? "past"
-                : "active"
-            ), //selected가 있으면 노란색이고 아니면 status에 따라 결정하게 된다.
+                ? theme.palette.hospital.closed
+                : theme.palette.hospital.open,
             strokeWidth: "0.2px",
-            stroke: "black",
             fontSize: "3rem",
             "& .MuiSvgIcon-root": {
               outline: "1px solid red",
@@ -84,6 +84,10 @@ export const GFLMap = () => {
         center: [selectedHospital.longitude, selectedHospital.latitude],
         duration: 2000,
       });
+      // Review: Should changing selectedHospital close the popup
+      if (selectedHospital.id !== popupInfo?.hospital.id) {
+        setPopupInfo(null);
+      }
     } else {
       setPopupInfo(null);
     }
@@ -135,6 +139,10 @@ export const GFLMap = () => {
           <GFLPopup popupInfo={popupInfo} onClose={() => setPopupInfo(null)} />
         </Box>
       )}
+      <SponsorPanel />
+      <LearnMoreOverlay />
+      {/* <DonationDialog /> */}
+      <DonateOverlay />
     </Map>
   );
 };

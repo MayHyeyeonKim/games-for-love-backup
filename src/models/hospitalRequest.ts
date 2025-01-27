@@ -1,8 +1,18 @@
+/**
+ *  HospitalRequest.ts
+ *
+ *  @copyright 2024 Digital Aid Seattle
+ *
+ */
+
+import { CorporatePartner } from "./corporatePartner";
+
 export type HospitalRequest = {
   recordId: string;
   oppReqId: string;
   name: string;
   requestNarrative: string;
+  titleRequestNarrative: string;
   equipReq: string;
   requested: number;
   fundingDeadline: Date | undefined;
@@ -10,15 +20,7 @@ export type HospitalRequest = {
   play3Y: string;
   collected: string;
   funders: string;
-  requestPicture1: string;
-  requestPicture2: string;
-  requestPicture3: string;
-  requestPicture4: string;
-  requestPicture5: string;
-  corpPartner1Name: string;
-  corpPartner1Logo: string;
-  corpPartner1Type: string;
-  corpPartner2Name: string;
-  corpPartner2Logo: string;
-  corpPartner2Type: string;
+  requestPictures: string[];
+  corpPartners: CorporatePartner[];
 };
+

@@ -18,9 +18,9 @@ interface HospitalsContextType {
 
 export const HospitalsContext = createContext<HospitalsContextType>({
   hospitals: [],
-  setHospitals: () => {},
+  setHospitals: () => { },
   originals: [],
-  setOriginals: () => {},
+  setOriginals: () => { },
 });
 
 export const HospitalsContextProvider = (props: { children: ReactNode }) => {
@@ -30,7 +30,7 @@ export const HospitalsContextProvider = (props: { children: ReactNode }) => {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
 
   useEffect(() => {
-    setHospitals(originals); //originals가 바뀌면 hospitals도 업데이트
+    setHospitals(originals);
   }, [originals]);
 
   return (

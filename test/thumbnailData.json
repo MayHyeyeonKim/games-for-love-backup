@@ -1,7 +1,7 @@
 [
   {
     "Hospital Name": "Virginia Mason Medical Center",
-    "Status": "past",
+    "Status": "blabla",
     "Organization Notes / Description": "Description C",
     "State": "WA",
     "Country": "USA",
@@ -324,92 +324,6 @@
       }
     ],
     "ID": 4,
-    "Type of Organization": "TypeD",
-    "Kids Served / Year": 400
-  },
-  {
-    "Hospital Name": "The Mount Sinai Hospital",
-    "Status": "active",
-    "Organization Notes / Description": "Description D",
-    "State": "NY",
-    "Country": "USA",
-    "City": "NewYork",
-    "Latitude": 40.7898,
-    "Longitude": -73.9535,
-    "ZIP": "10029",
-    "Address": "1468 Madison Ave",
-    "Hospital Picture 1": [
-      {
-        "id": "attQHiSeczAh5lbY4",
-        "width": 800,
-        "height": 533,
-        "url": "https://lh3.googleusercontent.com/p/AF1QipOTLJDx4y3BlqJzoeL5I6cNWue1aRR7C5g-L-Ub=s680-w680-h510",
-        "filename": "Swedish_Queen_Anne.jpg",
-        "size": 123456,
-        "type": "image/jpeg",
-        "thumbnails": {
-          "small": {
-            "url": "https://lh3.googleusercontent.com/p/AF1QipOTLJDx4y3BlqJzoeL5I6cNWue1aRR7C5g-L-Ub=s680-w680-h510",
-            "width": 54,
-            "height": 36
-          },
-          "large": {
-            "url": "https://lh3.googleusercontent.com/p/AF1QipOTLJDx4y3BlqJzoeL5I6cNWue1aRR7C5g-L-Ub=s680-w680-h510",
-            "width": 768,
-            "height": 512
-          },
-          "full": {
-            "url": "https://lh3.googleusercontent.com/p/AF1QipOTLJDx4y3BlqJzoeL5I6cNWue1aRR7C5g-L-Ub=s680-w680-h510",
-            "width": 800,
-            "height": 533
-          }
-        }
-      }
-    ],
-    "ID": 5,
-    "Type of Organization": "TypeD",
-    "Kids Served / Year": 400
-  },
-  {
-    "Hospital Name": "Providence Heart Medical Center",
-    "Status": "active",
-    "Organization Notes / Description": "Description A",
-    "State": "WA",
-    "Country": "USA",
-    "City": "Spokane",
-    "Latitude": 47.6493,
-    "Longitude": -117.4114,
-    "ZIP": "10029",
-    "Address": "1468 Madison Ave",
-    "Hospital Picture 1": [
-      {
-        "id": "attQHiSeczAh5lbY4",
-        "width": 800,
-        "height": 533,
-        "url": "https://lh3.googleusercontent.com/p/AF1QipNz4tZDC1JJ0dhp36p5t2Qo5e_32pj8OIFBkAvK=s680-w680-h510",
-        "filename": "Swedish_Queen_Anne.jpg",
-        "size": 123456,
-        "type": "image/jpeg",
-        "thumbnails": {
-          "small": {
-            "url": "https://lh3.googleusercontent.com/p/AF1QipNz4tZDC1JJ0dhp36p5t2Qo5e_32pj8OIFBkAvK=s680-w680-h510",
-            "width": 54,
-            "height": 36
-          },
-          "large": {
-            "url": "https://lh3.googleusercontent.com/p/AF1QipNz4tZDC1JJ0dhp36p5t2Qo5e_32pj8OIFBkAvK=s680-w680-h510",
-            "width": 768,
-            "height": 512
-          },
-          "full": {
-            "url": "https://lh3.googleusercontent.com/p/AF1QipNz4tZDC1JJ0dhp36p5t2Qo5e_32pj8OIFBkAvK=s680-w680-h510",
-            "width": 800,
-            "height": 533
-          }
-        }
-      }
-    ],
-    "ID": 6,
     "Type of Organization": "TypeD",
     "Kids Served / Year": 400
   }
