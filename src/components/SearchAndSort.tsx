@@ -4,32 +4,35 @@
  *  @copyright 2024 Digital Aid Seattle
  *
  */
-import { ChangeEvent, useContext, useState } from "react";
-import {
-  Box,
-  TextField,
-  IconButton,
-  Button,
-  InputAdornment,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import SearchIcon from "@mui/icons-material/Search";
+import { Box, IconButton, InputAdornment, TextField } from "@mui/material";
+import { ChangeEvent, useContext, useState } from "react";
+import GamesForLoveLogo from "../assets/games-for-love-logo.png";
 
 import FilterDialog from "./FilterDialog";
 
+import { FilterContext } from "../context/FilterContext";
 import { HospitalsContext } from "../context/HospitalContext";
 import { hospitalService } from "../services/hospital/hospitalService";
-import { FilterContext } from "../context/FilterContext";
+import ToolbarButton from "../styles/ToolbarButton";
 import { sortDirection } from "../types/fillterType";
-import { BORDER_COLOR } from "../styles/theme";
+import { GeneralDonationContext } from "../context/GeneralDonationContext";
 
 export const SearchAndSort = () => {
   const [showFilters, setShowFilters] = useState(false);
+
   const { originals, hospitals, setHospitals } = useContext(HospitalsContext);
   const { filters, setFilters } = useContext(FilterContext);
   const [isDisabled, setIsDisabled] = useState(false);
+
+  const { setDonateOverlayOpen } = useContext(GeneralDonationContext);
+
+  const handleDonateClick = () => {
+    setDonateOverlayOpen(true);
+  };
 
   const handleOpenFilters = () => {
     setShowFilters(true);
@@ -64,17 +67,27 @@ export const SearchAndSort = () => {
   };
 
   return (
-    <Box data-testid="search-and-sort-box">
+    <>
       <Box
+        data-testid="search-and-sort-box"
         sx={{
           display: "flex",
           alignItems: "center",
           gap: "8px",
-          marginTop: "20px",
+          margin: "20px 5px 0px 5px ",
         }}
       >
+        <a href="https://gamesforlove.org">
+          <img
+            src={GamesForLoveLogo}
+            alt="Games For Love Logo"
+            width={96}
+            height={40}
+          />
+        </a>
+
         <TextField
-          placeholder="Search hospital name"
+          placeholder="Search"
           onChange={changeSearch}
           InputProps={{
             endAdornment: (
@@ -86,7 +99,7 @@ export const SearchAndSort = () => {
             ),
           }}
           sx={{
-            backgroundColor: "#ededed",
+            backgroundColor: (theme) => theme.palette.grey[200],
             flex: 1,
             height: "40px",
             border: "none",
@@ -107,55 +120,31 @@ export const SearchAndSort = () => {
             },
           }}
         />
-        <IconButton
-          onClick={handleOpenFilters}
-          disabled={isDisabled}
-          sx={{
-            padding: "10px",
-            backgroundColor: "#ffffff",
-            borderRadius: "12px",
-            border: "1px solid " + BORDER_COLOR,
-            height: "36px",
-            width: "64px",
-          }}
-        >
+        <ToolbarButton onClick={handleOpenFilters}>
           <FilterListIcon />
-        </IconButton>
-
-        <Button
-          variant="outlined"
+        </ToolbarButton>
+        <ToolbarButton
           onClick={handelOrderButton}
           disabled={
             isDisabled || filters.sortDirection === sortDirection.UNDEFINED
           }
-          sx={{
-            color: "#000",
-            textTransform: "capitalize",
-            padding: "0px",
-            margin: "0px",
-            width: "40px",
-            height: "36px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: "12px",
-            border: "1px solid " + BORDER_COLOR,
-            backgroundColor: "white",
-            "&:hover": {
-              border: "1px solid " + BORDER_COLOR,
-            },
-          }}
         >
           {filters.sortDirection === sortDirection.DESCENDING ? (
             <ArrowDownwardIcon />
           ) : (
             <ArrowUpwardIcon />
           )}
-        </Button>
+        </ToolbarButton>
+        <ToolbarButton
+          sx={{
+            outline: "1px solid",
+          }}
+          onClick={handleDonateClick}
+        >
+          Donate
+        </ToolbarButton>
       </Box>
-      {showFilters && (
-        <FilterDialog open={showFilters} handleClose={handleCloseFilters} />
-      )}
-    </Box>
+      <FilterDialog open={showFilters} handleClose={handleCloseFilters} />
+    </>
   );
 };

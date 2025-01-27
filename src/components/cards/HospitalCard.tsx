@@ -1,49 +1,43 @@
-import { useEffect, useState } from "react";
 import {
-  Card,
-  CardMedia,
-  CardContent,
-  Typography,
   Box,
+  Card,
+  CardContent,
+  CardMedia,
   // Avatar,
   Chip,
   IconButton,
   Stack,
+  styled,
+  Theme,
+  Typography,
+  useTheme,
 } from "@mui/material";
+import { useEffect, useState } from "react";
 import { PopupInfo } from "../../models/popupInfo";
-import "./HospitalCard.style.css";
 
-import ActionButton from "../../styles/ActionButton";
-import { CLOSED_MARKER_COLOR, HIGHLIGHT_BACKGROUD_COLOR, OPEN_MARKER_COLOR } from "../../styles/theme";
+import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { useContext } from "react";
 import {
   DonationHospitalContext,
   LearnMoreHospitalContext,
 } from "../../context/SelectedHospitalContext";
-import { useContext } from "react";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
-import { styled } from "@mui/material/styles";
-import { GeneralInfo } from "../../models/generalInfo";
+import ActionButton from "../../styles/ActionButton";
 
-import { hospitalService } from "../../services/hospital/hospitalService";
 import { differenceInDays } from "date-fns";
-import { generalInfoService } from "../../services/generalInfo/generalInfoService";
 import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { generalInfoService } from "../../services/generalInfo/generalInfoService";
+import { hospitalService } from "../../services/hospital/hospitalService";
 import EmphasizedText from "../../styles/EmphasizedText";
+
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import "./HospitalCard.style.css";
 
 const CustomCancelIconButton = styled(IconButton)({
   opacity: 0.9,
   border: "none",
   boxShadow: "none",
-  "& .MuiSvgIcon-root": {
-    color: "white",
-  },
-  "&:focus": {
-    outline: "none",
-  },
 });
-
 // const CustomAvatar = styled(Avatar)({
 //   width: 13,
 //   height: 13,
@@ -62,6 +56,8 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
   popupInfo,
   onClose,
 }) => {
+  const theme = useTheme();
+
   const { setHospital: setDonationHospital } = useContext(
     DonationHospitalContext
   );
@@ -104,25 +100,9 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
 
   return (
     <>
-      <style>
-        {`
-      .carousel .control-arrow:hover {
-        background: none !important; 
-        box-shadow: none !important; 
-      }
-      .carousel .control-prev.control-arrow {
-        left: 30px;
-        }
-      .carousel .control-next.control-arrow {
-        right: 30px;
-        }
-    `}
-      </style>
       <Card
         sx={{
-          width: "265px",
           height: "242px",
-          border: "none",
           borderRadius: "10px",
           boxShadow: "0px 14px 80px rgba(34, 35, 58, 0.2)",
         }}
@@ -180,7 +160,8 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
               alignItems="center"
               justifyContent="center"
               sx={{
-                backgroundColor: HIGHLIGHT_BACKGROUD_COLOR,
+                backgroundColor: (theme: Theme) =>
+                  theme.palette.background.highlighted,
                 width: "265px",
                 height: "20px",
                 visibility:
@@ -209,13 +190,14 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
           </Typography>
 
           <Typography color="text.secondary" sx={{ fontSize: "10px" }}>
-            ${popupInfo?.hospital.matchedFunded?.fundingCompleted || 0}{" "}
-            raised of ${popupInfo?.hospital.matchedRequest?.requested} -{" "}
+            ${popupInfo?.hospital.matchedFunded?.fundingCompleted || 0} raised
+            of ${popupInfo?.hospital.matchedRequest?.requested} -{" "}
             <EmphasizedText
               sx={{
-                color: OPEN_MARKER_COLOR,
-                fontSize: "10px"
-              }}>
+                color: theme.palette.hospital.open,
+                fontSize: "10px",
+              }}
+            >
               {popupInfo?.hospital.status === "active" && "Actively Funding"}
             </EmphasizedText>
           </Typography>
@@ -241,7 +223,6 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
                 evt.stopPropagation();
                 setLearnMoreHospital(popupInfo?.hospital);
               }}
-              s
             >
               Learn more
             </ActionButton>

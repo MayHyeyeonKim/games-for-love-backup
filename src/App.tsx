@@ -1,28 +1,26 @@
 /**
- *  App.tsx
- *
- *  @copyright 2024 Digital Aid Seattle
- *
+ * App.tsx
  */
-import { Box, Grid } from "@mui/material";
-import "maplibre-gl/dist/maplibre-gl.css";
+
+import { Box } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
+import { ReflexContainer, ReflexElement, ReflexSplitter } from "react-reflex";
+
 import { GFLMap } from "./components/GFLMap";
 import { HospitalCardDetails } from "./components/HospitalCardDetails";
 import { SearchAndSort } from "./components/SearchAndSort";
 
-import "./App.css";
-
-import DonationDialog from "./components/DonationDialog";
-import LearnMoreOverlay from "./components/LearnMoreOverlay";
 import { HospitalsContext } from "./context/HospitalContext";
 import { hospitalService } from "./services/hospital/hospitalService";
 
+import "maplibre-gl/dist/maplibre-gl.css";
+import "react-reflex/styles.css";
+import "./App.css";
+
 const HospitalList = () => {
   const { hospitals } = useContext(HospitalsContext);
-  // React Context는 Provider에서 제공된 값이 변경되면 자동으로 모든 구독 중인 컴포넌트를 다시 렌더링하게 됨.
   return hospitals?.map((hospital, idx: number) => (
-    <HospitalCardDetails key={`h-${idx})`} hospital={hospital} />
+    <HospitalCardDetails key={`h-${idx}`} hospital={hospital} />
   ));
 };
 
@@ -43,29 +41,44 @@ function App() {
       setWindowHeight(window.innerHeight);
     }
     window.addEventListener("resize", handleResize);
+
+    // Fundraise Up 설치 스크립트 동적으로 추가
+    const script = document.createElement("script");
+    script.src = "https://cdn.fundraiseup.com/widget/AWALQQAB";
+    script.async = true;
+    script.onload = () =>
+      console.log("Fundraise Up script loaded successfully");
+    script.onerror = () => console.error("Failed to load Fundraise Up script");
+    document.head.appendChild(script);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      document.head.removeChild(script);
+    };
   }, []);
 
   return (
     <>
-      <Grid container>
-        <Grid item xs={12} lg={7}>
+      <ReflexContainer orientation="vertical">
+        <ReflexElement>
           <Box sx={{ height: windowHeight, overflowY: "auto" }}>
-            <Box padding={1}>
-              <SearchAndSort />
-            </Box>
+            <SearchAndSort />
             <Box padding={1} data-testid="hospital-list">
               <HospitalList />
             </Box>
           </Box>
-        </Grid>
-        <Grid item xs={12} lg={5}>
+        </ReflexElement>
+
+        <ReflexSplitter>
+          <Box height={windowHeight} width={5}></Box>
+        </ReflexSplitter>
+
+        <ReflexElement>
           <Box height={windowHeight} data-testid="gfl-map-box">
             <GFLMap />
           </Box>
-        </Grid>
-      </Grid>
-      <LearnMoreOverlay />
-      <DonationDialog />
+        </ReflexElement>
+      </ReflexContainer>
     </>
   );
 }

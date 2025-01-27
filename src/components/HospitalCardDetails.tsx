@@ -24,18 +24,11 @@ import {
   LearnMoreHospitalContext,
   SelectedHospitalContext,
 } from "../context/SelectedHospitalContext";
-import { GeneralInfo } from "../models/generalInfo";
 import { Hospital } from "../models/hospital";
 import { generalInfoService } from "../services/generalInfo/generalInfoService";
 import { hospitalService } from "../services/hospital/hospitalService";
 import ActionButton from "../styles/ActionButton";
 import EmphasizedText from "../styles/EmphasizedText";
-import {
-  BORDER_COLOR,
-  getStatusColor,
-  HIGHLIGHT_BACKGROUD_COLOR,
-  SELECTED_BACKGROUD_COLOR,
-} from "../styles/theme";
 
 export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
   hospital,
@@ -52,7 +45,7 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
   const [backgroundColor, setBackgroundColor] = useState<string>();
   const [pinColor, setPinColor] = useState<string>();
   const [isOpen, setIsOpen] = useState<boolean>(true);
-  const [generalInfo, setGeneralInfo] = useState<GeneralInfo | null>(null);
+  const [partnerName, setPartnerName] = useState<string>("Unknown Partner");
 
   const theme = useTheme();
 
@@ -60,17 +53,15 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
     if (hospital) {
       setBackgroundColor(
         hospitalService.isEqual(hospital, selectedHospital)
-          ? SELECTED_BACKGROUD_COLOR
+          ? theme.palette.action.selected
           : ""
       );
       setPinColor(
-        getStatusColor(
-          hospitalService.isEqual(hospital, selectedHospital)
-            ? "selected"
-            : hospital.status === "past"
-            ? "past"
-            : "active"
-        )
+        hospitalService.isEqual(hospital, selectedHospital)
+          ? theme.palette.hospital.selected
+          : hospital.status === "past"
+          ? theme.palette.hospital.closed
+          : theme.palette.hospital.open
       );
       setIsOpen(hospitalService.isHospitalOpen(hospital));
     }
@@ -109,19 +100,16 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
     evt.stopPropagation();
     setDonationHospital(hospital);
   };
+
   useEffect(() => {
     const fetchGeneralInfo = async () => {
-      const [info] = await generalInfoService.getGeneralInfo();
-      setGeneralInfo(info);
+      const [info] = await generalInfoService.findAll();
+      if (info.corpPartners.length > 0) {
+        setPartnerName(info.corpPartners[0].name || "Unknown Partner");
+      }
     };
     fetchGeneralInfo();
   }, []);
-
-  const partnerLogos = [
-    generalInfo?.corpPartner1Logo,
-    generalInfo?.corpPartner2Logo,
-    generalInfo?.corpPartner3Logo,
-  ].filter(Boolean);
 
   return (
     <div data-testid="hospital-detail-card">
@@ -136,6 +124,7 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
         onClick={changeSelectedHospital}
       >
         <CardActionArea
+          component="div"
           sx={{
             display: "flex",
             padding: 2,
@@ -179,7 +168,8 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
               sx={{
                 flex: 2,
                 padding: "0 16px",
-                borderRight: "1px solid " + BORDER_COLOR,
+                borderRight: (theme: Theme) =>
+                  "1px solid " + theme.palette.grey[400],
               }}
             >
               <Typography variant="subtitle2" color="text.secondary">
@@ -187,7 +177,6 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
                   sx={{
                     color: pinColor,
                     strokeWidth: "0.2px",
-                    stroke: "black",
                     fontSize: "1rem",
                     "& .MuiSvgIcon-root": {
                       outline: "1px solid red",
@@ -234,30 +223,20 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
                 alignItems="center"
                 marginTop={1}
                 sx={{
-                  backgroundColor: HIGHLIGHT_BACKGROUD_COLOR,
+                  backgroundColor: (theme: Theme) =>
+                    theme.palette.background.highlighted,
                   borderRadius: "8px",
                   padding: "2px 10px 2px 10px",
                   width: "245px",
                 }}
               >
-                {partnerLogos.length > 0 ? (
-                  partnerLogos.map((logo, index) => (
-                    <img
-                      key={index}
-                      src={logo}
-                      alt={`Corporate Partner ${index + 1}`}
-                      style={{ width: 50, height: 50, borderRadius: "50%" }}
-                    />
-                  ))
-                ) : (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ color: (theme) => theme.palette.common.black }}
-                  >
-                    Matched by Unknown Partner
-                  </Typography>
-                )}
+                <Typography
+                  variant="body2"
+                  marginRight={1}
+                  color="textSecondary"
+                >
+                  Matched by {partnerName}
+                </Typography>
               </Box>
               <Typography variant="body2" color="text.secondary">
                 ${Math.round(hospital.matchedFunded?.fundingCompleted || 0)}{" "}
@@ -265,9 +244,10 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
                 -{" "}
                 <EmphasizedText
                   sx={{
-                    color: getStatusColor(
-                      hospital?.status === "past" ? "past" : "active"
-                    ),
+                    color: (theme: Theme) =>
+                      hospital?.status === "past"
+                        ? theme.palette.hospital.closed
+                        : theme.palette.hospital.open,
                   }}
                 >
                   {hospital?.status}
@@ -282,7 +262,7 @@ export const HospitalCardDetails: React.FC<{ hospital: Hospital }> = ({
                 sx={{
                   marginTop: 5,
                   fontWeight: "bold",
-                  color: (theme: Theme) => theme.palette.grey[500],
+                  color: (theme: Theme) => theme.palette.text.secondary,
                 }}
               >
                 {hospitalService.getDonationMessage(hospital)}
