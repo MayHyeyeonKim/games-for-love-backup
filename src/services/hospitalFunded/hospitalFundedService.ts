@@ -7,9 +7,9 @@
 import { FieldSet, Record } from "airtable";
 import { airtableService } from "../../mapping/airtableService";
 import { HospitalFunded } from "../../models/hospitalFunded";
+import { extractUrls } from "../siteUtils";
 
 class HospitalFundedService {
-  
   transform = (record: Record<FieldSet>): HospitalFunded => {
     return {
       id: record.id,
@@ -18,24 +18,30 @@ class HospitalFundedService {
       orderID: `${record.fields["Order ID"]}`,
       equipmentShipped: record.fields["# Equipment Shipped"],
       fundingCompleted: record.fields["$ Funding"],
+      fundingDeadline: record.fields["Funding Deadline"],
       funders: record.fields["# Funders"],
       corporateFunding: record.fields["$ Corporate Funding"],
       thankYouNote: record.fields["Thank You Note"],
-      fundedPicture1: record.fields["Thank You Picture 1"],
-      fundedPicture2: record.fields["Thank You Picture 2"],
-      fundedPicture3: record.fields["Thank You Picture 3"],
-      fundedPicture4: record.fields["Thank You Picture 4"],
-      fundedPicture5: record.fields["Thank You Picture 5"],
-      impactPicture1: record.fields["Impact Picture 1"],
-      impactPicture2: record.fields["Impact Picture 2"],
-      impactPicture3: record.fields["Impact Picture 3"],
-      impactPicture4: record.fields["Impact Picture 4"],
-      impactPicture5: record.fields["Impact Picture 5"],
+      fundedPictures: [
+        extractUrls(record.fields["Thank You Picture 1"])[0],
+        extractUrls(record.fields["Thank You Picture 2"])[0],
+        extractUrls(record.fields["Thank You Picture 3"])[0],
+        extractUrls(record.fields["Thank You Picture 4"])[0],
+        extractUrls(record.fields["Thank You Picture 5"])[0],
+      ].filter((u) => u !== undefined),
+      impactPictures: [
+        extractUrls(record.fields["Impact Picture 1"])[0],
+        extractUrls(record.fields["Impact Picture 2"])[0],
+        extractUrls(record.fields["Impact Picture 3"])[0],
+        extractUrls(record.fields["Impact Picture 4"])[0],
+        extractUrls(record.fields["Impact Picture 5"])[0],
+      ].filter((u) => u !== undefined),
       shortThankYou: record.fields["Map Short Thank You"],
       thankYouNoteTitle: record.fields["Thank You Note Title"],
       impactTitle: record.fields["Impact Title"],
+      impactText: record.fields["Impact Text"],
     } as HospitalFunded;
-  }
+  };
 
   async findAll(): Promise<HospitalFunded[]> {
     const TABLE = import.meta.env.VITE_AIRTABLE_TABLE_HOSPITAL_FUNDED_REFERENCE;

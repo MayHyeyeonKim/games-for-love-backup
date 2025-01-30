@@ -5,7 +5,8 @@
  *
  */
 export type CorporatePartner = {
-  name: string;
-  logo: string;
-  type: string;
-};
+    name: string;
+    logo: string;
+    type: string;
+  }
+  

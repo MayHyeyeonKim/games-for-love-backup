@@ -33,28 +33,20 @@ import { hospitalService } from "../services/hospital/hospitalService";
 import ActionButton from "../styles/ActionButton";
 import { DialogProps } from "../types/dialogProps";
 
-const RadioOption = (props: { label: string; value: string }) => {
+const RadioOption = (props: { label: string, value: string }) => {
   return (
     <FormControlLabel
       value={props.value}
       control={
-        <Radio
-          sx={{
-            "& .MuiSvgIcon-root": {
-              color: "#000",
-            },
-          }}
-        />
+        <Radio />
       }
       label={props.label}
-    />
-  );
-};
+    />);
+}
 
 const CustomDialog = styled(Dialog)(() => ({
   "& .MuiDialog-paper": {
     width: "400px",
-    height: "730px",
     maxWidth: "none",
     margin: "auto",
     borderRadius: "15px",
@@ -62,26 +54,19 @@ const CustomDialog = styled(Dialog)(() => ({
 }));
 
 const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
+
   const { setOriginals } = useContext(HospitalsContext);
   const { filters, setFilters } = useContext(FilterContext);
   const [locationValue, setLocationValue] = useState<string>("");
-  const [locationChips, setLocationChips] = useState<string[]>(
-    filters.location
-  );
+  const [locationChips, setLocationChips] = useState<string[]>(filters.location);
   const [status, setStatus] = useState("all");
   const [sortBy, setSortBy] = useState("hospitalName");
 
   useEffect(() => {
     if (filters) {
       setLocationChips(filters.location);
-      setSortBy(filters.sortBy);
-      setStatus(
-        filters.status.length === 2
-          ? "all"
-          : filters.status.length === 1
-          ? filters.status[0]
-          : "hospitalName"
-      );
+      setSortBy(filters.sortBy)
+      setStatus(filters.status.length === 2 ? "all" : filters.status.length === 1 ? filters.status[0] : "hospitalName");
     }
   }, [filters]);
 
@@ -110,13 +95,14 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
     const updated = Object.assign(filters, {
       sortBy: sortBy,
       location: locationChips,
-      status: status === "all" ? ["active", "past"] : [status],
+      status: status === 'all' ? ["active", "past"] : [status]
     });
-    hospitalService.findAll(updated).then((hospitals) => {
-      setOriginals(hospitals);
-      setFilters(updated);
-      handleClose();
-    });
+    hospitalService.findAll(updated)
+      .then(hospitals => {
+        setOriginals(hospitals)
+        setFilters(updated);
+        handleClose();
+      })
   };
 
   const handleClearAll = async () => {
@@ -165,7 +151,7 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
       <DialogContent>
         <Box sx={{ mt: 2, mb: 0.8 }}>
           <Typography
-            sx={{ fontSize: "20px", color: "#000", fontWeight: "bold" }}
+            sx={{ fontSize: "20px", fontWeight: "bold" }}
           >
             Location
           </Typography>
@@ -178,7 +164,7 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
               mt: 0,
               p: 0,
               "& .MuiInputBase-root": {
-                backgroundColor: "#ededed",
+                backgroundColor: (theme) => theme.palette.grey[200],
                 borderRadius: "10px",
                 height: "36px",
                 marginLeft: "0px",
@@ -212,27 +198,20 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
             <Chip
               label={chip}
               key={index}
+              color="primary"
               onDelete={() => handleDeleteChip(chip)}
               sx={{
                 m: 0.3,
-                backgroundColor: "#000",
-                color: "#fff",
-                ".MuiChip-deleteIcon": {
-                  color: "#fff",
-                },
               }}
             />
           ))}
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {" "}
-          {/* MUI에서의 gap은 테마의 spacing 단위를 기반 ( 2 × 8px = 16px )*/}
           <FormControl>
             <FormLabel
               component="legend"
               sx={{
                 fontSize: "20px",
-                color: "text.primary", //sx 속성은 MUI 테마에 접근할 수 있으므로, theme.palette.text.primary를 직접 사용할 수 있다.
                 fontWeight: "bold",
                 "&.Mui-focused": {
                   color: "text.primary",
@@ -251,6 +230,7 @@ const FilterDialog: React.FC<DialogProps> = ({ open, handleClose }) => {
               <RadioOption value="past" label="Past" />
             </RadioGroup>
           </FormControl>
+
           <FormControl>
             <FormLabel
               component="legend"
